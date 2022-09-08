@@ -9,6 +9,7 @@
 int main(void)
 {	
 	uart_setup();
+	sram_setup();
 	sram_test();
 	while (1)
 	{

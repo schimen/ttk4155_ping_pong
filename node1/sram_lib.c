@@ -2,7 +2,7 @@
 
 void sram_setup(void)
 {
-    // Insert sram setup-code here
+    MCUCR |= (1 << SRE);
 }
 
 void sram_test(void)
