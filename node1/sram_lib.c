@@ -2,12 +2,28 @@
 
 void sram_setup(void)
 {
+    // Enable external memory
     MCUCR |= (1 << SRE);
+    // Mask unused bits
+    SFIOR |= (1 << XMM0);
+}
+
+void sram_write(uint16_t address, uint8_t data)
+{
+    volatile char* ext_ram = (char*)EXRAM_START;
+    ext_ram[address] = data;
+}
+
+uint8_t sram_read(uint16_t address)
+{
+    volatile char* ext_ram = (char*)EXRAM_START;
+    uint8_t ret_val = ext_ram [address];
+    return ret_val;
 }
 
 void sram_test(void)
 {
-    volatile char *ext_ram = (char *) 0x1800; // Start address for the SRAM
+    volatile char *ext_ram = (char *)EXRAM_START; // Start address for the SRAM
     uint16_t ext_ram_size = 0x800;
     uint16_t write_errors = 0;
     uint16_t retrieval_errors = 0;

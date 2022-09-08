@@ -3,7 +3,6 @@
 
 #define BAUD 9600
 
-#include "defines.h"
 #include <stdio.h>
 #include <avr/io.h>
 
