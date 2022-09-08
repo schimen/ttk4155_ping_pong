@@ -1,4 +1,4 @@
-#include "uart_functions.h"
+#include "uart_lib.h"
 
 int send_character(char data, FILE * file)
 {
@@ -16,7 +16,7 @@ int receive_character(FILE * file)
 	return UDR1;
 }
 
-void usart_setup()
+void uart_setup(void)
 {
 	unsigned long baud = BAUD;
 	unsigned long clockspeed = F_CPU;
