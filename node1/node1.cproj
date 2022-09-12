@@ -36,7 +36,7 @@
   <documentation help="" />
   <offline-documentation help="" />
   <dependencies>
-    <content-extension eid="atmel.asf" uuidref="Atmel.ASF" version="3.42.0" />
+    <content-extension eid="atmel.asf" uuidref="Atmel.ASF" version="3.44.1" />
   </dependencies>
 </framework-data>
     </AsfFrameworkConfig>
@@ -137,6 +137,18 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="main.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="sram_lib.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="sram_lib.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="uart_lib.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="uart_lib.h">
       <SubType>compile</SubType>
     </Compile>
   </ItemGroup>

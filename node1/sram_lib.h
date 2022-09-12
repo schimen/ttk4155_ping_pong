@@ -1,7 +1,7 @@
 #ifndef SRAM_LIB_H_
 #define SRAM_LIB_H_
 
-#define EXRAM_START 0x1800
+#define EXRAM_START 0x0000
 
 #include <stdio.h>
 #include <stdlib.h>

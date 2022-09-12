@@ -2,6 +2,7 @@
 #define UART_LIB_H_
 
 #define BAUD 9600
+#define F_CPU 4915200
 
 #include <stdio.h>
 #include <avr/io.h>
