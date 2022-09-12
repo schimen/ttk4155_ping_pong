@@ -3,9 +3,10 @@
 void sram_setup(void)
 {
     // Enable external memory
-    MCUCR |= (1 << SRE);
+    MCUCR |= (1 << SRE) | (1 << SRW10);
+    EMCUCR |= (1 << SRW00) | (1 << SRW01) | (1 << SRW11);
     // Mask unused bits
-    SFIOR |= (1 << XMM0);
+    SFIOR |= (1 << XMM2);
 }
 
 void sram_write(uint16_t address, uint8_t data)
@@ -24,7 +25,7 @@ uint8_t sram_read(uint16_t address)
 void sram_test(void)
 {
     volatile char *ext_ram = (char *)EXRAM_START; // Start address for the SRAM
-    uint16_t ext_ram_size = 0x800;
+    uint16_t ext_ram_size = 0x100;//0x800;
     uint16_t write_errors = 0;
     uint16_t retrieval_errors = 0;
     printf("Starting SRAM test...\n");
@@ -53,5 +54,5 @@ void sram_test(void)
             retrieval_errors++;
         }
     }
-    printf("SRAM test completed with \n%4d errors in write phase and \n%4d errors in retrieval phase\n\n", write_errors, retrieval_errors);
+    printf("Completed %4d SRAM tests with \n%4d errors in write phase (%4d%%) and \n%4d errors in retrieval phase (%4d%%)\n\n", ext_ram_size, write_errors, (write_errors*100)/ext_ram_size, retrieval_errors, (retrieval_errors*100)/ext_ram_size);
 }
