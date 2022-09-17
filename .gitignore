@@ -1,2 +1,5 @@
 **/Debug/
 **/.vs/
+**/.vscode/
+**/__pycache__/
+**/build/
