@@ -8,6 +8,9 @@
 #include "js_slider.h"
 enum JS_position {DEFAULT, RIGHT, LEFT, UP, DOWN};
 
+bool btn_down = false;
+
+
 /* ADC-value to direction */
 uint8_t get_JS_position(uint8_t x_val, uint8_t y_val){
 
@@ -64,4 +67,25 @@ void silder_service(struct ADC_Values *adc_val)
 // 	_delay_ms(100);
 // 	printf("Right slider =%d\r\n", r_slider);
 // 	_delay_ms(100);
+}
+
+void button_setup(void){
+	//set as input
+	DDRD &= ~(1 << LEFT_BUTTON); 
+	DDRD &= ~(1 << RIGHT_BUTTON);
+	btn_down = false; 
+}
+
+bool button_press(uint8_t button){
+	/* the button is pressed when BUTTON bit is clear */
+	if ((PIND & (1<<button)) && !btn_down) {
+		btn_down = true;
+		return false;
+	}
+	else if ((PIND & (1<<button)) && btn_down)
+	{
+		btn_down = false;
+		return true;
+	}
+	else {return false;}
 }

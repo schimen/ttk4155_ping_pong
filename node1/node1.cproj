@@ -151,6 +151,12 @@
     <Compile Include="main.c">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="oled_lib.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="oled_lib.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="sram_lib.c">
       <SubType>compile</SubType>
     </Compile>

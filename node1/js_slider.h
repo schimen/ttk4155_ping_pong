@@ -10,8 +10,12 @@
 #define F_CPU 4915200
 #include <stdio.h>
 #include <avr/io.h>
+#include <stdbool.h>
 #include "util/delay.h"
 #include "adc_lib.h"
+
+#define LEFT_BUTTON PIND4
+#define RIGHT_BUTTON PIND5
 
 /* PRIVATE FUNCTIONS */
 /* ADC-value to direction */
@@ -26,5 +30,9 @@ void JS_service(void);
 
 /* Converts slider value from ADC to percentage and prints */
 void silder_service(struct ADC_Values *adc_val);
+
+void button_setup(void);
+
+bool button_press(uint8_t button);
 
 #endif
