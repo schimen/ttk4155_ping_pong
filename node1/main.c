@@ -9,6 +9,7 @@
 #include "sram_lib.h"
 #include "adc_lib.h"
 #include "js_slider.h"
+#include "oled_lib.h"
 
 /* External interrupts for buttons*/
 ISR (INT0_vect)
@@ -22,20 +23,24 @@ ISR (INT1_vect)
 }
 
 int main(void)
-{	
+{
 	uart_setup();
 	sram_setup();
 	button_setup();
-	sei(); // Enable global interrupts
+	oled_setup();
 	calibrate_joystick();
-	
+	/*Enable printf (trenger vi den her?) */
+    fdevopen(send_character, receive_character);
+	sei(); // Enable global interrupts
+
 	while(1)
 	{
- 		adc_read(); // Update ADC-values
- 		JS_service();
- 		silder_service();
-		
-		button_service();
-		_delay_ms(500);
+ 	//	adc_read(); // Update ADC-values
+ 	//	JS_service();
+ 	//	silder_service();
+	//	button_service();
+	//	_delay_ms(500);
+
+		oled_putchar(uart_getchar()); // oled echo :)
 	}
 }
