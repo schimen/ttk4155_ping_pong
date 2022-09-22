@@ -10,27 +10,32 @@
 #include "adc_lib.h"
 #include "js_slider.h"
 
-char buffer[5];
+/* External interrupts for buttons*/
+ISR (INT0_vect)
+{
+	left_btn_pressed = true;
+}
+
+ISR (INT1_vect)
+{
+	right_btn_pressed = true;
+}
 
 int main(void)
 {	
 	uart_setup();
 	sram_setup();
-	//sram_test();
 	button_setup();
+	sei(); // Enable global interrupts
+	calibrate_joystick();
 	
-	while(1){
-		JS_service();
-		silder_service(&adc_result);
+	while(1)
+	{
+ 		adc_read(); // Update ADC-values
+ 		JS_service();
+ 		silder_service();
 		
-		if (button_press(LEFT_BUTTON))
-		{
-			printf("LEFT BUTTON PRESS\r\n");
-		}
-		if (button_press(RIGHT_BUTTON))
-		{
-			printf("RIGHT BUTTON PRESS\r\n");
-		}
-		_delay_ms(200);
+		button_service();
+		_delay_ms(500);
 	}
 }
