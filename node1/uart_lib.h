@@ -9,6 +9,8 @@
 
 int send_character(char data, FILE * file);
 
+uint8_t uart_getchar();
+
 int receive_character(FILE * file);
 
 void uart_setup(void);

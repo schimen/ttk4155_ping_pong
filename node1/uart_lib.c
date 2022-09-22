@@ -9,11 +9,14 @@ int send_character(char data, FILE * file)
 	return 0;
 }
 
-int receive_character(FILE * file)
-{
-	// Wait for available data
+uint8_t uart_getchar() {
 	while (!(UCSR1A & (1 << RXC1)));
 	return UDR1;
+}
+
+int receive_character(FILE * file)
+{
+	return uart_getchar();
 }
 
 void uart_setup(void)
@@ -28,7 +31,4 @@ void uart_setup(void)
 	UCSR1B = (1<<RXEN1)|(1<<TXEN1);
 	/* Set frame format: 8 bit data, 2 stop bit */
 	UCSR1C = (1<<URSEL1)|(1<<USBS1)|(1<<UCSZ10)|(1<<UCSZ11);
-	
-	/*Enable printf */
-	fdevopen (send_character, receive_character);
 }
