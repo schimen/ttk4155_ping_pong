@@ -1,4 +1,4 @@
-import matplotlib.pyplot as plt
+mport matplotlib.pyplot as plt
 import matplotlib.animation as animation
 from time import time
 from serial import Serial
@@ -39,18 +39,8 @@ def animate(i):
 
     ax.clear()
     for ax_name in ax_dict:
-            ax.plot(*ax_dit[ax_name], label=ax_name)
+            ax.plot(*ax_dict[ax_name], label=ax_name)
     ax.legend()
 
-ani = animation.FuncAnimation(fig, animate, interval=10)
-plt.show()
-
-    y = int(ser.readline())
-    ys.append(y)
-    xs.append(time())
-    ax1.clear()
-    ax1.plot(xs, ys)
-
-
-ani = animation.FuncAnimation(fig, animate, interval=100)
+ani = animation.FuncAnimation(fig, animate, interval=0)
 plt.show()
