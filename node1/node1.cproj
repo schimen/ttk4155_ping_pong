@@ -142,6 +142,12 @@
     <Compile Include="adc_lib.h">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="js_slider.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="js_slider.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="main.c">
       <SubType>compile</SubType>
     </Compile>
