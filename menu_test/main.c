@@ -38,7 +38,11 @@ struct menu_page sub_page_2 = {
 // Process incoming characters from the terminal
 void handle_character()
 {
+    // Raw mode in terminal
+    system("stty raw");
     int c = getchar();
+    // Normal terminal
+    system("stty cooked");
     switch (c) {
         case 'A': // Arrow up
             select_down();
@@ -48,7 +52,7 @@ void handle_character()
             select_up();
             print_menu();
             break;
-        case ' ': // Space (selection)
+        case ' ': // Enter
             run_option();
             break;
     }
