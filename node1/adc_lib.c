@@ -6,19 +6,20 @@
  */ 
 #include "adc_lib.h"
 
-
-void adc_read(void) {
+void adc_read(void)
+ {
 	volatile char *adc = (char *)ADC_START_ADR;
 	
-	adc[0] = (uint8_t)0; //Hardwire mode: sample all channels
-	
+	// Hardwire mode: sample all channels
+	adc[0] = (uint8_t)0; 
 	_delay_ms(10);
 	
-	//Read result from all analog channels
-	adc_result.x_val = adc[0];
-	adc_result.y_val = adc[0];
-	adc_result.left_slider = adc[0];
-	adc_result.right_slider = adc[0];
-};
+	// Read result from all analog channels
+	joystick.x_adc = adc[0];
+	joystick.y_adc = adc[0];
+	slider.left_adc = adc[0];
+	slider.right_adc = adc[0];
+
+}
 
 

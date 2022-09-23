@@ -11,20 +11,36 @@
 #include "js_slider.h"
 #include "oled_lib.h"
 
+/* External interrupts for buttons*/
+ISR (INT0_vect)
+{
+	left_btn_pressed = true;
+}
+
+ISR (INT1_vect)
+{
+	right_btn_pressed = true;
+}
+
 int main(void)
 {
 	uart_setup();
 	sram_setup();
 	button_setup();
-
 	oled_setup();
-	
-	/*Enable printf */
-	fdevopen(send_character, receive_character);
+	calibrate_joystick();
+	/*Enable printf (trenger vi den her?) */
+    fdevopen(send_character, receive_character);
+	sei(); // Enable global interrupts
 
-	while (1)
+	while(1)
 	{
-		// oled echo :)
-		oled_putchar(uart_getchar());
+ 	//	adc_read(); // Update ADC-values
+ 	//	JS_service();
+ 	//	silder_service();
+	//	button_service();
+	//	_delay_ms(500);
+
+		oled_putchar(uart_getchar()); // oled echo :)
 	}
 }
