@@ -15,8 +15,8 @@ void adc_read(void)
 	_delay_ms(10);
 	
 	// Read result from all analog channels
-	joystick.x_adc = adc[0];
 	joystick.y_adc = adc[0];
+	joystick.x_adc = adc[0];
 	slider.left_adc = adc[0];
 	slider.right_adc = adc[0];
 

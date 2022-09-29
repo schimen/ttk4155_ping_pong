@@ -16,10 +16,12 @@
 
 #define LEFT_BUTTON PIND2 //INT0
 #define RIGHT_BUTTON PIND3 //INT1
+#define JS_BUTTON PINE0 //INT2
 
 //Flags for detecting button presses
 volatile bool left_btn_pressed; 
 volatile bool right_btn_pressed;
+volatile bool JS_btn_pressed;
 
 struct Joystick_t {
 	uint8_t  x_adc; // x-value from ADC

@@ -64,23 +64,29 @@ void start_menu() {
     change_menu(&main_page);
 }
 
+ISR (INT2_vect)
+{
+	printf("JS INTERRUPT\r\n");
+	JS_btn_pressed = true;
+}
+
 int main(void)
 {
 	uart_setup();
+	/*Enable printf */
 	fdevopen(send_character, receive_character);
 	sram_setup();
 	button_setup();
 	oled_setup();
 	calibrate_joystick();
 	sei(); // Enable global interrupts
+	printf("Setup done\r\n");
 	start_menu();
 	while(1) {
-		//	adc_read(); // Update ADC-values
-		//	JS_service();
-		//	silder_service();
-		//	button_service();
-		//	_delay_ms(500);
-
-		//oled_putchar(uart_getchar()); // oled echo :)
+ 		//adc_read(); // Update ADC-values
+ 		//JS_service();
+ 		//silder_service();
+		//button_service();
+		//_delay_ms(500);
 	}
 }

@@ -65,16 +65,22 @@ void button_setup(void)
 {
 	// Set button pins as input
 	DDRD &= ~((1 << LEFT_BUTTON) | (1 << RIGHT_BUTTON)); 
+	DDRE &= ~(1 << JS_BUTTON); 
 	
-	// INT0 and INT1 triggers on rising edge
+	// Set internal pull-up for JS-button
+	PORTE |= (1 << JS_BUTTON);
+	
+	// INT0 and INT1 triggers on rising edge, INT2 triggers on falling edge
  	MCUCR |= 0x0F; 
  	
 	 //Enable INT0 and INT1
-	GICR = (1 << INT0) | (1 << INT1); 
+	GICR = ((1 << INT0) | (1 << INT1) | (1 << INT2));
+	//GICR = ((1 << INT0) | (1 << INT1));
 	
 	//Flags to detect button press 
 	left_btn_pressed = false;
 	right_btn_pressed = false;
+	JS_btn_pressed = false;
 }
 
 
