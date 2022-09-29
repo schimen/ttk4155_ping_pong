@@ -22,6 +22,12 @@ ISR (INT1_vect)
 	right_btn_pressed = true;
 }
 
+ISR (INT2_vect)
+{
+	printf("JS INTERRUPT\r\n");
+	JS_btn_pressed = true;
+}
+
 int main(void)
 {
 	uart_setup();
@@ -29,17 +35,18 @@ int main(void)
 	button_setup();
 	oled_setup();
 	calibrate_joystick();
-	/*Enable printf (trenger vi den her?) */
+	/*Enable printf */
     fdevopen(send_character, receive_character);
 	sei(); // Enable global interrupts
-
+	
+	printf("Setup done\r\n");
 	while(1)
 	{
- 	//	adc_read(); // Update ADC-values
- 	//	JS_service();
- 	//	silder_service();
-	//	button_service();
-	//	_delay_ms(500);
+ 		adc_read(); // Update ADC-values
+ 		JS_service();
+ 		silder_service();
+		button_service();
+		_delay_ms(500);
 
 		oled_putchar(uart_getchar()); // oled echo :)
 	}
