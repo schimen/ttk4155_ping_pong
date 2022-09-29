@@ -6,6 +6,7 @@
 
 #include <stdio.h>
 #include <avr/io.h>
+#include <string.h>
 #include "fonts.h"
 #include <avr/pgmspace.h>
 
@@ -16,6 +17,8 @@ void oled_clear();
 void oled_set_column(uint8_t column);
 
 void oled_set_line(uint8_t line);
+
+void oled_set_page(uint8_t page);
 
 void oled_set_pos(uint8_t page, uint8_t column);
 
@@ -28,6 +31,8 @@ void oled_putchar(uint8_t c);
 int oled_send_character(char data, FILE *file);
 
 int oled_recv_character(FILE *file);
+
+void oled_printf(const char *format, ...);
 
 /* OLED command defines */
 #define CMD_SEGMENT_REMAP_0              0xA0 

@@ -65,17 +65,17 @@ void oled_set_pos(uint8_t page, uint8_t column){
     oled_set_column(column);
 }
 
-void oled_command_write(uint8_t command){
+void oled_command_write(uint8_t command) {
     volatile char* oled = (char*) OLED_COMMAND_ADDRESS;
     oled[0] = command;
 }
 
-void oled_data_write(uint8_t data){
+void oled_data_write(uint8_t data) {
     volatile char* oled = (char*) OLED_DATA_ADDRESS;
     oled[0] = data;
 }
 
-void oled_putchar(uint8_t c){
+void oled_putchar(uint8_t c) {
     if (c == '\n') {
         //oled_set_page(0);
     }
@@ -90,7 +90,7 @@ void oled_putchar(uint8_t c){
     }
 }
 
-void oled_clear(){
+void oled_clear() {
     for (uint8_t i = 0; i < 127; i++){
         for (uint8_t j = 0; j < 8; j++){
             oled_set_pos(j, i);
@@ -99,8 +99,19 @@ void oled_clear(){
     }
 }
 
-int oled_send_character(char data, FILE * file)
-{
+int oled_send_character(char data, FILE * file) {
     oled_putchar((uint8_t)data);
     return 0;
+}
+
+void oled_printf(const char *format, ...) {
+    va_list argptr;
+    va_start(argptr, format);
+    char out[127];
+    vsnprintf(out, 127, format, argptr);
+    int msg_len = strlen(out);
+    for (int i = 0; i < msg_len; i++) {
+        oled_putchar(out[i]);
+    }
+    va_end(argptr);
 }
