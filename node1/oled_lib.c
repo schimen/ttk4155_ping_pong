@@ -104,14 +104,9 @@ int oled_send_character(char data, FILE * file) {
     return 0;
 }
 
-void oled_printf(const char *format, ...) {
-    va_list argptr;
-    va_start(argptr, format);
-    char out[127];
-    vsnprintf(out, 127, format, argptr);
-    int msg_len = strlen(out);
-    for (int i = 0; i < msg_len; i++) {
-        oled_putchar(out[i]);
+void oled_print(char *text) {
+    uint8_t length = strlen(text);
+    for (uint8_t i = 0; i < length; i++) {
+        oled_putchar(text[i]);
     }
-    va_end(argptr);
 }

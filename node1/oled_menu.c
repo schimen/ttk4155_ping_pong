@@ -11,23 +11,29 @@ void print_menu()
     oled_clear();
     //printf("CLeared menu\n");
     // Set position 0
-    oled_set_column(0);
-    oled_set_page(0);
+    oled_set_pos(0, 0);
     // Print title
     
     //printf("Print title\n");
-    oled_printf("** %s **\n", current_page->title);
+
+    oled_putchar('*'); oled_putchar(' ');
+    oled_print(current_page->title);
+    oled_putchar(' '); oled_putchar('*');
+
+    //oled_printf("** %s **\n", current_page->title);
     // Print all options
-    for (int i = 0; i < MENU_LENGTH; i++) {
+    for (uint8_t i = 0; i < MENU_LENGTH; i++) {
         //printf("print option %d\n", i);
-        oled_set_column(0);
-        oled_set_page(i+1);
+        oled_set_pos(i+1, 0);
+        char *name = current_page->options[i].name;
         if (i == option_selection) { // highlight selected option
             //printf("Option selected\n");
-            oled_printf("> %s\n", current_page->options[i].name);
+            oled_putchar('>');
+            oled_print(name);
         }
         else {
-            oled_printf("  %s\n", current_page->options[i].name);
+            oled_putchar(' ');
+            oled_print(name);
         }
     }
 }

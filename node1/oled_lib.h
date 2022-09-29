@@ -32,7 +32,7 @@ int oled_send_character(char data, FILE *file);
 
 int oled_recv_character(FILE *file);
 
-void oled_printf(const char *format, ...);
+void oled_print(char *text);
 
 /* OLED command defines */
 #define CMD_SEGMENT_REMAP_0              0xA0 
