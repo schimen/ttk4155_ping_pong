@@ -27,12 +27,18 @@ ISR (INT1_vect)
 	print_menu();
 }
 
+ISR (INT2_vect)
+{
+	JS_btn_pressed = true;
+	run_option();
+}
+
 struct menu_page main_page = {
     .title = "Main menu",
     .options = {
-        { .name = "First sub-menu" },
-        { .name = "Second sub-menu" },
-        { .name = "Exit" }
+        { .name = "First sub-menu", .callback = &change_menu },
+        { .name = "Second sub-menu", .callback = &change_menu },
+		{ .name = "Exit", .callback = &oled_clear }
     }
 };
 
@@ -49,7 +55,6 @@ struct menu_page sub_page_2 = {
     .options = {
         { .name = "Main menu",  .callback = &change_menu },
         { .name = "Sub-menu 1", .callback = &change_menu },
-        { .name = "Exit", .callback = &oled_clear }
     }
 };
 
@@ -62,12 +67,6 @@ void start_menu() {
     sub_page_2.options[0].callback_parameter = &main_page;
     sub_page_2.options[1].callback_parameter = &sub_page_1;
     change_menu(&main_page);
-}
-
-ISR (INT2_vect)
-{
-	printf("JS INTERRUPT\r\n");
-	JS_btn_pressed = true;
 }
 
 int main(void)
