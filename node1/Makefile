@@ -1,6 +1,3 @@
-# List all source files to be compiled; separate with space
-SOURCE_FILES := main.c uart_lib.c sram_lib.c adc_lib.c js_slider.c oled_lib.c fonts.c images.c oled_menu.c
-
 # Set this flag to "yes" (no quotes) to use JTAG; otherwise ISP (SPI) is used
 PROGRAM_WITH_JTAG := yes
 
@@ -11,30 +8,34 @@ ifeq ($(PROGRAM_WITH_JTAG), yes)
 endif
 
 BUILD_DIR := build
+INCLUDE_DIR := include
 TARGET_CPU := atmega162
 TARGET_DEVICE := m162
 CLOCK := 4915200
 
+# List all source files to be compiled; separate with space
+SOURCE_FILES := $(wildcard $(INCLUDE_DIR)/*.c) src/main.c
+
 CC := avr-gcc
-CFLAGS := -O -std=c11 -DF_CPU=$(CLOCK) -mmcu=$(TARGET_CPU) -ggdb
+CFLAGS := -I$(INCLUDE_DIR) -O -std=c11 -DF_CPU=$(CLOCK) -mmcu=$(TARGET_CPU) -ggdb
 
 OBJECT_FILES = $(SOURCE_FILES:%.c=$(BUILD_DIR)/%.o)
 
-.DEFAULT_GOAL := $(BUILD_DIR)/main.hex
+.DEFAULT_GOAL := $(BUILD_DIR)/src/main.hex
 
 $(BUILD_DIR):
-	mkdir $(BUILD_DIR)
+	mkdir -p $(BUILD_DIR); mkdir -p $(BUILD_DIR)/$(INCLUDE_DIR); mkdir -p $(BUILD_DIR)/src
 
 $(BUILD_DIR)/%.o: %.c | $(BUILD_DIR)
 	$(CC) $(CFLAGS) -c $< -o $@
 
-$(BUILD_DIR)/main.hex: $(OBJECT_FILES) | $(BUILD_DIR)
+$(BUILD_DIR)/src/main.hex: $(OBJECT_FILES) | $(BUILD_DIR)
 	$(CC) $(CFLAGS) $(OBJECT_FILES) -o $(BUILD_DIR)/a.out
-	avr-objcopy -j .text -j .data -O ihex $(BUILD_DIR)/a.out $(BUILD_DIR)/main.hex
+	avr-objcopy -j .text -j .data -O ihex $(BUILD_DIR)/a.out $(BUILD_DIR)/src/main.hex
 
 .PHONY: flash
-flash: $(BUILD_DIR)/main.hex
-	avrdude -p $(TARGET_DEVICE) -c $(PROGRAMMER) -U flash:w:$(BUILD_DIR)/main.hex:i
+flash: $(BUILD_DIR)/src/main.hex
+	avrdude -p $(TARGET_DEVICE) -c $(PROGRAMMER) -U flash:w:$(BUILD_DIR)/src/main.hex:i
 
 .PHONY: clean
 clean:
@@ -47,7 +48,7 @@ erase:
 .PHONY: debug
 debug:
 	if pgrep avarice; then pkill avarice; fi
-	avrdude -p $(TARGET_DEVICE) -c $(PROGRAMMER) -U flash:w:$(BUILD_DIR)/main.hex:i
+	avrdude -p $(TARGET_DEVICE) -c $(PROGRAMMER) -U flash:w:$(BUILD_DIR)/src/main.hex:i
 	x-terminal-emulator -e avarice --edbg --ignore-intr :4242
 	sleep 2
 	avr-gdb -tui -iex "target remote localhost:4242" $(BUILD_DIR)/a.out
