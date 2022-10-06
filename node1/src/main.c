@@ -12,44 +12,28 @@
 #include "oled_lib.h"
 #include "oled_menu.h"
 
-volatile bool exit_feature = true;
-
 /* External interrupts for buttons*/
-ISR (INT0_vect)
+ISR (INT0_vect) //LEFT USB-button
 {
 	left_btn_pressed = true;
-	select_up();
-	print_menu();
 }
 
-ISR (INT1_vect)
+ISR (INT1_vect) //RIGHT USB-button
 {
-	right_btn_pressed = true;
-	select_down();
-	print_menu();
+	run_option(); //select menu-item
 }
 
 ISR (INT2_vect)
 {
-	if(!exit_feature)
-	{
-		exit_feature = true;
-	}
-	else {
-		run_option();
-	}
+	//Interrupt handler for MCP2515 goes here
 }
 
-void start_ADC_print(){
-	exit_feature = false;
-}
 
 struct menu_page main_page = {
     .title = "Main menu",
     .options = {
         { .name = "First sub-menu", .callback = &change_menu },
         { .name = "Second sub-menu", .callback = &change_menu },
-		{ .name = "ADC Measurement", .callback = &change_menu },
 		{ .name = "Exit", .callback = &oled_clear }
     }
 };
@@ -70,28 +54,45 @@ struct menu_page sub_page_2 = {
     }
 };
 
-struct menu_page adc_page = {
-	.title = "ADC",
-	.options = {
-		{ .name = "Main menu",  .callback = &change_menu },
-		{ .name = "Print ADC",  .callback = &start_ADC_print }
-		
-	}
-};
 
 void start_menu() {
 	// Pointers to callback parameters. TODO: fix this
     main_page.options[0].callback_parameter = &sub_page_1;
     main_page.options[1].callback_parameter = &sub_page_2;
-    main_page.options[2].callback_parameter = &adc_page;
     sub_page_1.options[0].callback_parameter = &main_page;
     sub_page_1.options[1].callback_parameter = &sub_page_2;
     sub_page_2.options[0].callback_parameter = &main_page;
     sub_page_2.options[1].callback_parameter = &sub_page_1;
-	adc_page.options[0].callback_parameter = &main_page;
     change_menu(&main_page);
 }
 
+void menu_service(uint8_t direction){
+	
+	switch (direction)
+	{
+		case DEFAULT:
+			//printf("DEFAULT\r\n");
+			break;
+		case RIGHT:
+			//printf("RIGHT\r\n");
+			break;
+		case LEFT:
+			//printf("LEFT\r\n");
+			break;
+		case UP:
+			//printf("UP\r\n");
+			select_up();
+			print_menu();
+			_delay_ms(100);
+			break;
+		case DOWN:
+			//printf("DOWN\r\n");
+			select_down();
+			print_menu();
+			_delay_ms(100);
+			break;
+	}
+}
 int main(void)
 {
 	uart_setup();
@@ -103,19 +104,17 @@ int main(void)
 	calibrate_joystick();
 	sei(); // Enable global interrupts
 	printf("Setup done\r\n");
+	
 	start_menu();
 	
 	while(1) {
-//   		adc_read(); // Update ADC-values
-//   		JS_service();
+   		adc_read(); // Update ADC-values
+   		uint8_t JS_pos = get_JS_direction();
+		menu_service(JS_pos);
+
 //   		silder_service();
 //  		button_service();
 //   		_delay_ms(500);'
-	if(!exit_feature){
-		adc_read();
-		JS_service();
-		_delay_ms(500);
-	}
 	}
 }
 

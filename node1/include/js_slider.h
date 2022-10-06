@@ -18,6 +18,8 @@
 #define RIGHT_BUTTON PIND3 //INT1
 #define JS_BUTTON PINE0 //INT2
 
+enum JS_position {DEFAULT, RIGHT, LEFT, UP, DOWN};
+
 //Flags for detecting button presses
 volatile bool left_btn_pressed; 
 volatile bool right_btn_pressed;
@@ -44,10 +46,10 @@ struct Slider_t {
 void calibrate_joystick(void);
 
 /* Converts a adc-value of the joystick to a percentage*/
-int8_t get_JS_position(uint8_t adc_val, uint8_t default_val);
+int8_t JS_adc_to_percent(uint8_t adc_val, uint8_t default_val);
 
 /* Converts a percent-value of the joystick to a direction */
-uint8_t get_JS_direction(int8_t x_val, int8_t y_val);
+uint8_t JS_percent_to_direction(int8_t x_val, int8_t y_val);
 
 /* Silder ADC-value to percentage */
 uint8_t get_slider_position(uint8_t val);
@@ -56,8 +58,8 @@ uint8_t get_slider_position(uint8_t val);
 void button_setup(void);
 
 /*------------- PLACEHOLDER FUNCTIONS -------------*/
-/* Placeholder function for joystick: Converts joystick value from ADC to a direction and prints it */
-void JS_service(void);
+/* Converts joystick value from ADC to a direction and returns it */
+uint8_t get_JS_direction(void);
 
 /* Placeholder function for sliders: Converts slider value from ADC to percentage and prints it */
 void silder_service(void);

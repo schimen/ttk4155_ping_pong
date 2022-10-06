@@ -6,9 +6,7 @@
  */ 
 
 #include "js_slider.h"
-#define TRIGGER_POINT 50 //percent
-
-enum JS_position {DEFAULT, RIGHT, LEFT, UP, DOWN};
+#define TRIGGER_POINT 70 //percent
 
 /* Averages 10 adc-measurements to set the default adc-values for the joystick in default position */
 void calibrate_joystick(void)
@@ -28,7 +26,7 @@ void calibrate_joystick(void)
 }
 
 /* Converts adc-value of the joystick to a percentage*/
-int8_t get_JS_position(uint8_t adc_val, uint8_t default_val)
+int8_t JS_adc_to_percent(uint8_t adc_val, uint8_t default_val)
 {
 	if (adc_val < default_val) //LEFT or DOWN, Values: 0% to -100%
 	{
@@ -45,7 +43,7 @@ int8_t get_JS_position(uint8_t adc_val, uint8_t default_val)
 }
 
 /* Percent-value of the joystick to a direction */
-uint8_t get_JS_direction(int8_t x_val, int8_t y_val)
+uint8_t JS_percent_to_direction(int8_t x_val, int8_t y_val)
 {
 	if(x_val < -TRIGGER_POINT) { return LEFT; }
 	else if(x_val > TRIGGER_POINT) { return RIGHT; }
@@ -85,36 +83,16 @@ void button_setup(void)
 
 
 /*------------- PLACEHOLDER FUNCTIONS -------------*/
-/* Placeholder function for joystick: Converts joystick value from ADC to a direction and prints it */
-void JS_service(void)
+/* Converts joystick value from ADC to a direction and returns it */
+uint8_t get_JS_direction(void)
 {
 	/*Converts adc-value to position in percent*/
-	joystick.x_pos = get_JS_position(joystick.x_adc, joystick.x_default);
-	joystick.y_pos = get_JS_position(joystick.y_adc, joystick.y_default);
-	printf("Joystick X:%d Y:%d \r\n", joystick.x_pos, joystick.y_pos);
+	joystick.x_pos = JS_adc_to_percent(joystick.x_adc, joystick.x_default);
+	joystick.y_pos = JS_adc_to_percent(joystick.y_adc, joystick.y_default);
+	//printf("Joystick X:%d Y:%d \r\n", joystick.x_pos, joystick.y_pos);
 	
 	/* Returns which direction the joystick is pointing */
-	uint8_t JS_pos = get_JS_direction(joystick.x_pos, joystick.y_pos);
-	
-	/* Prints which direction the joystick is pointing */
-	switch (JS_pos)
-	{
-		case DEFAULT:
-		printf("DEFAULT\r\n");
-		break;
-		case RIGHT:
-		printf("RIGHT\r\n");
-		break;
-		case LEFT:
-		printf("LEFT\r\n");
-		break;
-		case UP:
-		printf("UP\r\n");
-		break;
-		case DOWN:
-		printf("DOWN\r\n");
-		break;
-	}
+	return JS_percent_to_direction(joystick.x_pos, joystick.y_pos);
 }
 
 /* Placeholder function for sliders: Converts slider value from ADC to percentage and prints it */
