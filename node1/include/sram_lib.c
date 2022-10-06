@@ -3,8 +3,7 @@
 void sram_setup(void)
 {
     // Enable external memory
-    MCUCR |= (1 << SRE) | (1 << SRW10);
-    EMCUCR |= (1 << SRW00) | (1 << SRW01) | (1 << SRW11);
+    MCUCR |= (1 << SRE);
     // Mask unused bits
     SFIOR |= (1 << XMM2);
 }

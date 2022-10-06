@@ -59,7 +59,7 @@ void run_option()
     }
 }
 
-void select_down()
+void select_up()
 {
     option_selection--;
     if (option_selection < 0) {
@@ -67,7 +67,7 @@ void select_down()
     }
 }
 
-void select_up()
+void select_down()
 {
     option_selection++;
     if (option_selection > MENU_LENGTH - 1) {
