@@ -114,6 +114,7 @@
         <avrgcc.compiler.directories.IncludePaths>
           <ListValues>
             <Value>%24(PackRepoDir)\atmel\ATmega_DFP\1.7.374\include\</Value>
+            <Value>../include</Value>
           </ListValues>
         </avrgcc.compiler.directories.IncludePaths>
         <avrgcc.compiler.optimization.level>Optimize debugging experience (-Og)</avrgcc.compiler.optimization.level>
@@ -136,45 +137,61 @@
     </ToolchainSettings>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="adc_lib.c">
+    <Compile Include="include\adc_lib.c">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="adc_lib.h">
+    <Compile Include="include\adc_lib.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="fonts.c">
+    <Compile Include="include\fonts.c">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="fonts.h">
+    <Compile Include="include\fonts.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="js_slider.c">
+    <Compile Include="include\images.c">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="js_slider.h">
+    <Compile Include="include\images.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="main.c">
+    <Compile Include="include\js_slider.c">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="oled_lib.c">
+    <Compile Include="include\js_slider.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="oled_lib.h">
+    <Compile Include="include\oled_lib.c">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="sram_lib.c">
+    <Compile Include="include\oled_lib.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="sram_lib.h">
+    <Compile Include="include\oled_menu.c">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="uart_lib.c">
+    <Compile Include="include\oled_menu.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="uart_lib.h">
+    <Compile Include="include\sram_lib.c">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="include\sram_lib.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\uart_lib.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\uart_lib.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\main.c">
+      <SubType>compile</SubType>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="include" />
+    <Folder Include="src" />
   </ItemGroup>
   <Import Project="$(AVRSTUDIO_EXE_PATH)\\Vs\\Compiler.targets" />
 </Project>

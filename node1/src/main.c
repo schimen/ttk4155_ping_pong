@@ -12,6 +12,8 @@
 #include "oled_lib.h"
 #include "oled_menu.h"
 
+volatile bool exit_feature = true;
+
 /* External interrupts for buttons*/
 ISR (INT0_vect)
 {
@@ -29,8 +31,17 @@ ISR (INT1_vect)
 
 ISR (INT2_vect)
 {
-	JS_btn_pressed = true;
-	run_option();
+	if(!exit_feature)
+	{
+		exit_feature = true;
+	}
+	else {
+		run_option();
+	}
+}
+
+void start_ADC_print(){
+	exit_feature = false;
 }
 
 struct menu_page main_page = {
@@ -38,6 +49,7 @@ struct menu_page main_page = {
     .options = {
         { .name = "First sub-menu", .callback = &change_menu },
         { .name = "Second sub-menu", .callback = &change_menu },
+		{ .name = "ADC Measurement", .callback = &change_menu },
 		{ .name = "Exit", .callback = &oled_clear }
     }
 };
@@ -54,18 +66,29 @@ struct menu_page sub_page_2 = {
     .title = "Sub menu 2",
     .options = {
         { .name = "Main menu",  .callback = &change_menu },
-        { .name = "Sub-menu 1", .callback = &change_menu },
+        { .name = "Sub-menu 1", .callback = &change_menu }
     }
+};
+
+struct menu_page adc_page = {
+	.title = "ADC",
+	.options = {
+		{ .name = "Main menu",  .callback = &change_menu },
+		{ .name = "Print ADC",  .callback = &start_ADC_print }
+		
+	}
 };
 
 void start_menu() {
 	// Pointers to callback parameters. TODO: fix this
     main_page.options[0].callback_parameter = &sub_page_1;
     main_page.options[1].callback_parameter = &sub_page_2;
+    main_page.options[2].callback_parameter = &adc_page;
     sub_page_1.options[0].callback_parameter = &main_page;
     sub_page_1.options[1].callback_parameter = &sub_page_2;
     sub_page_2.options[0].callback_parameter = &main_page;
     sub_page_2.options[1].callback_parameter = &sub_page_1;
+	adc_page.options[0].callback_parameter = &main_page;
     change_menu(&main_page);
 }
 
@@ -81,11 +104,18 @@ int main(void)
 	sei(); // Enable global interrupts
 	printf("Setup done\r\n");
 	start_menu();
+	
 	while(1) {
- 		//adc_read(); // Update ADC-values
- 		//JS_service();
- 		//silder_service();
-		//button_service();
-		//_delay_ms(500);
+//   		adc_read(); // Update ADC-values
+//   		JS_service();
+//   		silder_service();
+//  		button_service();
+//   		_delay_ms(500);'
+	if(!exit_feature){
+		adc_read();
+		JS_service();
+		_delay_ms(500);
+	}
 	}
 }
+
