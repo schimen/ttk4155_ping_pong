@@ -172,4 +172,6 @@ void mcp2515_reset();
 
 uint8_t mcp2515_read_status();
 
+void mcp2515_setup_loopback();
+
 #endif

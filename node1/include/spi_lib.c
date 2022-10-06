@@ -15,13 +15,9 @@ void spi_setup(){
 
 
 uint8_t spi_transceive(uint8_t data){
-	/* Wait for serial transfer complete flag */
-	while(!(SPSR & (1<<SPIF)));
 	SPDR = data;
-
 	/* Wait for serial transfer complete flag */
-	while(!(SPSR & (1<<SPIF)));
-
+	while(!(SPSR & (1 << SPIF)));
 	/* Read SPI data register */	
 	return SPDR;
 }

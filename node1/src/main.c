@@ -11,6 +11,7 @@
 #include "js_slider.h"
 #include "oled_lib.h"
 #include "oled_menu.h"
+#include "mcp2515_lib.h"
 
 /* External interrupts for buttons*/
 ISR (INT0_vect) //LEFT USB-button
@@ -27,7 +28,6 @@ ISR (INT2_vect)
 {
 	//Interrupt handler for MCP2515 goes here
 }
-
 
 struct menu_page main_page = {
     .title = "Main menu",
@@ -53,7 +53,6 @@ struct menu_page sub_page_2 = {
         { .name = "Sub-menu 1", .callback = &change_menu }
     }
 };
-
 
 void start_menu() {
 	// Pointers to callback parameters. TODO: fix this
@@ -93,6 +92,7 @@ void menu_service(uint8_t direction){
 			break;
 	}
 }
+
 int main(void)
 {
 	uart_setup();
@@ -102,15 +102,22 @@ int main(void)
 	button_setup();
 	oled_setup();
 	calibrate_joystick();
+	spi_setup();
+	mcp2515_setup_loopback();
 	sei(); // Enable global interrupts
 	printf("Setup done\r\n");
 	
 	start_menu();
-	
+	uint8_t status;
 	while(1) {
-   		adc_read(); // Update ADC-values
-   		uint8_t JS_pos = get_JS_direction();
-		menu_service(JS_pos);
+		status = mcp2515_read_status();
+		printf("Status: %d\n", status);
+		//mcp2515_setup_loopback();
+		_delay_ms(250);
+
+   		//adc_read(); // Update ADC-values
+   		//uint8_t JS_pos = get_JS_direction();
+		//menu_service(JS_pos);
 
 //   		silder_service();
 //  		button_service();
