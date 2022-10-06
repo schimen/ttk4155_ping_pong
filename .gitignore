@@ -1,4 +1,5 @@
 **/Debug/
+**/Release/
 **/.vs/
 **/.vscode/
 **/__pycache__/
