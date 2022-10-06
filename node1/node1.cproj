@@ -143,6 +143,15 @@
     <Compile Include="include\adc_lib.h">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="include\mcp2515.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\mcp2515.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\spi_lib.c">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="include\fonts.c">
       <SubType>compile</SubType>
     </Compile>
@@ -153,6 +162,9 @@
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="include\images.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\spi_lib.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="include\js_slider.c">
