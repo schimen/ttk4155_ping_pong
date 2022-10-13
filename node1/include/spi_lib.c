@@ -5,12 +5,12 @@ void spi_setup(){
 	
 	/* set MISO pin as input */
 	DDRB &= ~(1 << SPI_MISO);
-	
-	/* set SS-pin internal pull-up */
-	PORTB |= (1 << SPI_SS);
-	
+
 	/* set SS, MOSI, SCK pins as outputs */ 
 	DDRB |= ((1 << SPI_SS) | (1 << SPI_MOSI) | (1 << SPI_SCK));
+	
+	/* set SS-pin internal high */
+	PORTB |= (1 << SPI_SS);
 	
 	/* SPI Enable, master mode, frequency fosc/4 */
 	SPCR |= ((1 << SPE) | (1 << MSTR));
@@ -18,19 +18,19 @@ void spi_setup(){
 
 
 uint8_t spi_transceiveByte(uint8_t data){
-	DDRB &= ~(1 << SPI_SS);
+	PORTB &= ~(1 << SPI_SS);
 	
 	SPDR = data;
 	/* Wait for serial transfer complete flag */
 	while(!(SPSR & (1 << SPIF)));
 	/* Read SPI data register */	
-	DDRB |= ~(1 << SPI_SS);
+	PORTB |= ~(1 << SPI_SS);
 	return SPDR;
 }
 
 int8_t spi_transceive(uint8_t *tx, uint8_t *rx, uint8_t txLen, uint8_t rxLen){
 	int8_t status;
-	DDRB &= ~(1 << SPI_SS);
+	PORTB &= ~(1 << SPI_SS);
 
 	if (txLen && rxLen)
 	{
@@ -82,7 +82,7 @@ int8_t spi_transceive(uint8_t *tx, uint8_t *rx, uint8_t txLen, uint8_t rxLen){
 		status = -1; //ERROR
 	}
 	
-	DDRB |= (1 << SPI_SS);
+	PORTB |= (1 << SPI_SS);
 	return status;
 }
 

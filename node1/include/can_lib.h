@@ -1,10 +1,11 @@
 #ifndef CAN_LIB_H_
 #define CAN_LIB_H_
-
+#define F_CPU 4915200
 #include <avr/io.h>
 #include <stdio.h>
 #include "string.h"
 #include "mcp2515_lib.h"
+#include "util/delay.h"
 
 struct can_frame{
 	uint16_t id; // Message id

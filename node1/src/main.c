@@ -112,7 +112,7 @@ int main(void)
 	uint8_t status;
 	while(1) {
 		can_test();
-		_delay_ms(500);
+		_delay_ms(100);
 
    		//adc_read(); // Update ADC-values
    		//uint8_t JS_pos = get_JS_direction();

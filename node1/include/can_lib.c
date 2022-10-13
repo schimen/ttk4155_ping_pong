@@ -17,7 +17,6 @@ void can_write(struct can_frame *can_msg) {
 	memcpy(&buffer[5], can_msg->data, can_msg->len);
 
 	mcp_load_txbuffer(TXBUF0_START_ID, buffer, sizeof(buffer));
-	
 	mcp_request_to_send();
 }
 
@@ -58,13 +57,19 @@ uint8_t can_receive(struct can_frame *can_msg) {
 	else {
 		uint8_t buffer[5];
 		// Set buffer number to read_mode for specifying buffer
-		uint8_t buffer_number = (rx_status >> 7) & 1;
+		uint8_t buffer_number = (rx_status >> 7) & 0x01;
 		uint8_t read_mode = (buffer_number << 1) | RXBUF0_START_ID;
 		mcp_read_rxbuffer(read_mode, buffer, 5);
 		
+		printf("Recieve buffer val:");
+		for (uint8_t i = 0; (i < sizeof(buffer)); i++)
+		{
+			printf("%d ", buffer[i]);
+		}
+		printf("\r\n");
 		can_msg->id = (buffer[0] << 8) | buffer[1];
 		can_msg->ext_id = (buffer[2] << 8) | buffer[3];
-		can_msg->len = buffer[4];
+		can_msg->len = 3;
 		// Set buffer number to new read mode when we want to start reading data
 		read_mode = (buffer_number << 1) | RXBUF0_START_DATA;
 		mcp_read_rxbuffer(read_mode, can_msg->data, can_msg->len);
@@ -76,7 +81,7 @@ uint8_t can_receive(struct can_frame *can_msg) {
 void can_test()
 {
 	struct can_frame can_tx_msg;
-	uint8_t data[] = {4,2,0};
+	uint8_t data[] = {1,1,1};
 	can_tx_msg.id = 123;
 	can_tx_msg.ext_id = 0;
 	can_tx_msg.len	= 3;
@@ -85,9 +90,13 @@ void can_test()
 	struct can_frame can_rx_msg;
 	
 	can_write(&can_tx_msg);
-	
-	can_receive(&can_rx_msg);
-	
+	//can_receive(&can_rx_msg);
+	if (can_receive(&can_rx_msg))
+	{
+		printf("message recieved \r\n");
+	}else{
+		printf("No message \r\n");	
+	}
 	printf("Sending: %d%d%d\r\n", can_tx_msg.data[0], can_tx_msg.data[1], can_tx_msg.data[2]);
-	printf("Receiving: %d%d%d\r\n", can_rx_msg.data[0], can_rx_msg.data[1], can_rx_msg.data[2]);
+	printf("Receiving msg with len: %d form id %d: %d %d %d\r\n", can_rx_msg.len, can_rx_msg.id, can_rx_msg.data[0], can_rx_msg.data[1], can_rx_msg.data[2]);
 }
