@@ -21,19 +21,55 @@ void can_write(struct can_frame *can_msg) {
 	mcp_request_to_send();
 }
 
+/**
+ * @brief Get the number of new received messages
+ * 
+ * @param status_byte Byte representing rx status from can driver.
+ * @return uint8_t Number of new messages ready to be received.
+ */
+uint8_t get_n_new_messages(uint8_t status_byte) {
+	// Get the two top bits (corresponding to buffer numbers in status byte)
+	uint8_t buffer_number = (status_byte >> 7) & 0x03;
+	// Return number of new messages based on buffer_number
+	if (buffer_number > 2) {
+		return 2;
+	}
+	else if (buffer_number > 0) {
+		return 1;
+	}
+	else {
+		return 0;
+	}
+}
 
-void can_receive(struct can_frame *can_msg) {
+/**
+ * @brief Receive can message
+ * 
+ * @param can_msg Pointer to can_frame struct where the new message will be 
+ *   stored.
+ * @return uint8_t Number of messages received
+ */
+uint8_t can_receive(struct can_frame *can_msg) {
 	uint8_t rx_status = mcp_read_rx_status();
-	
-	if(rx_status == 1 || rx_status == 3){
+	if (get_n_new_messages(rx_status) == 0) {
+		// No new messages, return 0
+		return 0;
+	}
+	else {
 		uint8_t buffer[5];
-		mcp_read_rxbuffer(RXBUF0_START_ID, buffer, 5);
+		// Set buffer number to read_mode for specifying buffer
+		uint8_t buffer_number = (rx_status >> 7) & 1;
+		uint8_t read_mode = (buffer_number << 1) | RXBUF0_START_ID;
+		mcp_read_rxbuffer(read_mode, buffer, 5);
 		
 		can_msg->id = (buffer[0] << 8) | buffer[1];
 		can_msg->ext_id = (buffer[2] << 8) | buffer[3];
 		can_msg->len = buffer[4];
-		
-		mcp_read_rxbuffer(RXBUF0_START_DATA, can_msg->data, can_msg->len);
+		// Set buffer number to new read mode when we want to start reading data
+		read_mode = (buffer_number << 1) | RXBUF0_START_DATA;
+		mcp_read_rxbuffer(read_mode, can_msg->data, can_msg->len);
+		// Received 1 message, return 1
+		return 1;
 	}
 }
 
