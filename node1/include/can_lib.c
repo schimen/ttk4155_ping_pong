@@ -10,7 +10,7 @@ void can_setup() {
 void can_write(struct can_frame *can_msg) {
 	uint8_t buffer[5 + can_msg->len];
 	buffer[0] = (uint8_t) (can_msg->id >> 3);
-	buffer[1] = (uint8_t) (0xE0 & can_msg->id);
+	buffer[1] = (uint8_t) (0xE0 & (can_msg->id << 5));
 	buffer[4] = (can_msg->len & 0x0F);
 	memcpy(&buffer[5], can_msg->data, can_msg->len);
 
@@ -26,7 +26,7 @@ void can_write(struct can_frame *can_msg) {
  */
 uint8_t get_n_new_messages(uint8_t status_byte) {
 	// Get the two top bits (corresponding to buffer numbers in status byte)
-	uint8_t buffer_number = (status_byte >> 7) & 0x03;
+	uint8_t buffer_number = (status_byte >> 6) & 0x03;
 	// Return number of new messages based on buffer_number
 	if (buffer_number > 2) {
 		return 2;
@@ -46,7 +46,8 @@ uint8_t get_n_new_messages(uint8_t status_byte) {
  *   stored.
  * @return uint8_t Number of messages received
  */
-uint8_t can_receive(struct can_frame *can_msg) {
+uint8_t can_receive(struct can_frame *can_msg)
+{	
 	uint8_t rx_status = mcp_read_rx_status();
 	if (get_n_new_messages(rx_status) == 0) {
 		// No new messages, return 0
@@ -59,13 +60,7 @@ uint8_t can_receive(struct can_frame *can_msg) {
 		uint8_t read_mode = (buffer_number << 1) | RXBUF0_START_ID;
 		mcp_read_rxbuffer(read_mode, buffer, 5);
 		
-		printf("Recieve buffer val:");
-		for (uint8_t i = 0; (i < sizeof(buffer)); i++)
-		{
-			printf("%d ", buffer[i]);
-		}
-		printf("\r\n");
-		can_msg->id = (buffer[0] << 3) | (buffer[1] & 0x07);
+		can_msg->id = (buffer[0] << 3) | (buffer[1] >> 5);
 		can_msg->len = buffer[4] & 0x0F;
 
 		// Set buffer number to new read mode when we want to start reading data
@@ -78,23 +73,35 @@ uint8_t can_receive(struct can_frame *can_msg) {
 
 void can_test()
 {
-	struct can_frame can_tx_msg;
-	uint8_t data[] = {1,1,1};
-	can_tx_msg.id = 123;
-	can_tx_msg.ext_id = 0;
-	can_tx_msg.len	= 3;
-	can_tx_msg.data = data;
+	struct can_frame can_tx_msg = {
+		.data={ 0, 0, 0, 0, 0, 0, 0, 0},
+		.id=123,
+		.len=8,
+	};
 	
 	struct can_frame can_rx_msg;
 	
-	can_write(&can_tx_msg);
-	//can_receive(&can_rx_msg);
-	if (can_receive(&can_rx_msg))
-	{
-		printf("message recieved \r\n");
-	}else{
-		printf("No message \r\n");	
+	for (uint8_t i = 0; i < 127; i++) {
+		printf("Test %d:\n", i);
+		can_tx_msg.id = i;
+		for (uint8_t j = 0; j < can_tx_msg.len; j++) {
+			can_tx_msg.data[j] = i+j;
+		}
+		printf("Sending message (%d length): ", can_tx_msg.len);
+		for (uint8_t i = 0; i < can_tx_msg.len; i++) {
+			printf("%d, ", can_tx_msg.data[i]);
+		}
+		printf(" from id %d\n", can_tx_msg.id);
+		can_write(&can_tx_msg);
+		_delay_ms(1);
+		while (can_receive(&can_rx_msg))
+		{
+			printf("message received (%d length): ", can_rx_msg.len);
+			for (uint8_t i = 0; i < can_rx_msg.len; i++) {
+				printf("%d, ", can_rx_msg.data[i]);
+			}
+			printf(" from id %d\n", can_rx_msg.id);
+		}
+		printf("\n");
 	}
-	printf("Sending: %d%d%d\r\n", can_tx_msg.data[0], can_tx_msg.data[1], can_tx_msg.data[2]);
-	printf("Receiving msg with len: %d form id %d: %d %d %d\r\n", can_rx_msg.len, can_rx_msg.id, can_rx_msg.data[0], can_rx_msg.data[1], can_rx_msg.data[2]);
 }

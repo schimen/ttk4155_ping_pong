@@ -52,7 +52,10 @@ uint8_t mcp_read_status() {
 }
 
 uint8_t mcp_read_rx_status() {
-	return spi_transceiveByte(MCP_RX_STATUS);
+	uint8_t tx[] = {MCP_RX_STATUS};
+	uint8_t rx[2];
+	spi_transceive(tx, rx, 1, 2);
+	return rx[1];
 }
 
 void mcp_setup_loopback() {
