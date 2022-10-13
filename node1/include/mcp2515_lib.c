@@ -14,14 +14,14 @@ uint8_t mcp_read_byte(uint8_t address) {
 void mcp_read_rxbuffer(uint8_t read_mode, uint8_t * buffer, uint8_t len) {
 	/* Read MCP RX buffer defined by read_mode */
 	uint8_t tx[] = {MCP_READ_RX0 | (read_mode << 1)};
-	spi_transceive(&tx, buffer, 1, len);
+	spi_transceive(tx, buffer, 1, len);
 }
 
 
 void mcp_write_byte(uint8_t address, uint8_t data) {
 	/* Write */
 	uint8_t tx[3] = {MCP_WRITE, address, data};
-	spi_transceive(&tx, NULL, 3, 0);
+	spi_transceive(tx, NULL, 3, 0);
 }
 
 
