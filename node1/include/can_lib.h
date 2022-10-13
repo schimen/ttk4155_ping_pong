@@ -18,7 +18,7 @@ void can_setup();
 
 void can_write(struct can_frame *can_msg);
 
-void can_receive(struct can_frame *can_msg);
+uint8_t can_receive(struct can_frame *can_msg);
 
 void can_test();
 

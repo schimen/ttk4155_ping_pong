@@ -80,7 +80,7 @@ void can_test()
 	can_tx_msg.id = 123;
 	can_tx_msg.ext_id = 0;
 	can_tx_msg.len	= 3;
-	can_tx_msg.data = &data;
+	can_tx_msg.data = data;
 	
 	struct can_frame can_rx_msg;
 	
