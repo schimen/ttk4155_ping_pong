@@ -103,15 +103,15 @@ int main(void)
 	oled_setup();
 	calibrate_joystick();
 	spi_setup();
-	mcp2515_setup_loopback();
+	//mcp2515_setup_loopback();
 	sei(); // Enable global interrupts
 	printf("Setup done\r\n");
 	
 	start_menu();
 	uint8_t status;
 	while(1) {
-		status = mcp2515_read_status();
-		printf("Status: %d\n", status);
+// 		status = mcp2515_read_status();
+// 		printf("Status: %d\n", status);
 		//mcp2515_setup_loopback();
 		_delay_ms(250);
 
