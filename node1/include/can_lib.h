@@ -9,7 +9,6 @@
 
 struct can_frame{
 	uint16_t id; // Message id
-	uint16_t ext_id; // Extended id
 	uint8_t len;	// Data length
 	uint8_t *data; 
 };

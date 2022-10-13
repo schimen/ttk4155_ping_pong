@@ -8,12 +8,10 @@ void can_setup() {
 
 
 void can_write(struct can_frame *can_msg) {
-	uint8_t buffer[5+ can_msg->len];
-	buffer[0] = (uint8_t) can_msg->id >> 8;
-	buffer[1] = (uint8_t) (0xFF & can_msg->id);
-	buffer[2] = (uint8_t) can_msg->ext_id >> 8;
-	buffer[3] = (uint8_t) (0xFF & can_msg->ext_id);
-	buffer[4] = can_msg->len;
+	uint8_t buffer[5 + can_msg->len];
+	buffer[0] = (uint8_t) (can_msg->id >> 3);
+	buffer[1] = (uint8_t) (0xE0 & can_msg->id);
+	buffer[4] = (can_msg->len & 0x0F);
 	memcpy(&buffer[5], can_msg->data, can_msg->len);
 
 	mcp_load_txbuffer(TXBUF0_START_ID, buffer, sizeof(buffer));
@@ -67,9 +65,9 @@ uint8_t can_receive(struct can_frame *can_msg) {
 			printf("%d ", buffer[i]);
 		}
 		printf("\r\n");
-		can_msg->id = (buffer[0] << 8) | buffer[1];
-		can_msg->ext_id = (buffer[2] << 8) | buffer[3];
-		can_msg->len = 3;
+		can_msg->id = (buffer[0] << 3) | (buffer[1] & 0x07);
+		can_msg->len = buffer[4] & 0x0F;
+
 		// Set buffer number to new read mode when we want to start reading data
 		read_mode = (buffer_number << 1) | RXBUF0_START_DATA;
 		mcp_read_rxbuffer(read_mode, can_msg->data, can_msg->len);
