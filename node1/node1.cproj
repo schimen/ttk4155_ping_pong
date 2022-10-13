@@ -143,12 +143,6 @@
     <Compile Include="include\adc_lib.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="include\mcp2515_lib.c">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="include\mcp2515_lib.h">
-      <SubType>compile</SubType>
-    </Compile>
     <Compile Include="include\spi_lib.c">
       <SubType>compile</SubType>
     </Compile>

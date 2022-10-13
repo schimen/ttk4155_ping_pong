@@ -25,14 +25,32 @@ uint8_t spi_transceiveByte(uint8_t data){
 int8_t spi_transceive(uint8_t *tx, uint8_t *rx, uint8_t txLen, uint8_t rxLen){
 	int8_t status;
 	DDRB &= ~(1 << SPI_SS);
-	
+
 	if (txLen && rxLen)
 	{
-		for (uint8_t i = 0; i < txLen; i++)
+		if (txLen < rxLen)
 		{
-			SPDR = tx[i];
-			while(!(SPSR & (1 << SPIF)));
-			rx[i] = SPDR;
+			for (uint8_t i = 0; i < rxLen; i++)
+			{
+				if (i <= txLen) { SPDR = tx[i]; } 
+				else { SPDR = 0xFF; }
+				
+				while(!(SPSR & (1 << SPIF)));
+				rx[i] = SPDR;
+			}		
+		} else
+		{
+			for (uint8_t i = 0; i < txLen; i++)
+			{
+				SPDR = tx[i];
+				while(!(SPSR & (1 << SPIF)));
+				if (i <= rxLen){ rx[i] = SPDR; }
+				else
+				{
+					char flushBuffer;
+					flushBuffer = SPDR;	
+				}
+			}
 		}
 		status = sizeof(rx);
 	} else if (txLen)
