@@ -10,8 +10,8 @@
 
 void spi_setup();
 
-uint8_t spi_transceive(uint8_t data);
+uint8_t spi_transceiveByte(uint8_t data);
 
-uint8_t spi_read();
+int8_t spi_transceive(uint8_t *tx, uint8_t *rx, uint8_t txLen, uint8_t rxLen);
 
 #endif
