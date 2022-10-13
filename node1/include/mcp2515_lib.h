@@ -154,24 +154,46 @@ Copyright 2003 Kimberly Otten Software Consulting
 #define MCP_WAKIF		0x40
 #define MCP_MERRF		0x80
 
+enum rx_read_mode {
+	RXBUF0_START_ID,
+	RXBUF0_START_DATA,
+	RXBUF1_START_ID,
+	RXBUF1_START_DATA
+};
+
+
+enum tx_write_mode {
+	TXBUF0_START_ID,
+	TXBUF0_START_DATA,
+	TXBUF1_START_ID,
+	TXBUF1_START_DATA,
+	TXBUF2_START_ID,
+	TXBUF2_START_DATA
+};
 
 // PING PONG
 
 #include <avr/io.h>
 #include "spi_lib.h"
 
-uint8_t mcp2515_read(uint8_t address);
+uint8_t mcp_read_byte(uint8_t address);
 
-void mcp2515_write(uint8_t address, uint8_t data);
+void mcp_read_rxbuffer(uint8_t read_mode, uint8_t * buffer, uint8_t len);
 
-void mcp2515_request_to_send();
+void mcp_write_byte(uint8_t address, uint8_t data);
 
-void mcp2515_bit_modify(uint8_t address, uint8_t mask, uint8_t data);
+void mcp_load_txbuffer(uint8_t write_mode, uint8_t * data, uint8_t len);
 
-void mcp2515_reset();
+void mcp_request_to_send();
 
-uint8_t mcp2515_read_status();
+void mcp_bit_modify(uint8_t address, uint8_t mask, uint8_t data);
 
-void mcp2515_setup_loopback();
+void mcp_reset();
+
+uint8_t mcp_read_status();
+
+uint8_t mcp_read_rx_status();
+
+void mcp_setup_loopback();
 
 #endif
