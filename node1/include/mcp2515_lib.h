@@ -1,6 +1,8 @@
 #ifndef MCP2515_LIB_H_
 #define MCP2515_LIB_H_
-
+#include <avr/io.h>
+#include <stdio.h>
+#include "string.h"
 /*
 mcp2515.h
 

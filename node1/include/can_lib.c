@@ -16,7 +16,7 @@ void can_write(struct can_frame *can_msg) {
 	buffer[4] = can_msg->len;
 	memcpy(&buffer[5], can_msg->data, can_msg->len);
 
-	mcp_load_txbuffer(TXBUF0_START_ID, buffer);
+	mcp_load_txbuffer(TXBUF0_START_ID, buffer, sizeof(buffer));
 	
 	mcp_request_to_send();
 }
@@ -37,11 +37,14 @@ void can_receive(struct can_frame *can_msg) {
 	}
 }
 
-void test_can(){
+void can_test()
+{
 	struct can_frame can_tx_msg;
+	uint8_t data[] = {4,2,0};
 	can_tx_msg.id = 123;
+	can_tx_msg.ext_id = 0;
 	can_tx_msg.len	= 3;
-	can_tx_msg.data = {4,2,0};
+	can_tx_msg.data = &data;
 	
 	struct can_frame can_rx_msg;
 	
@@ -49,8 +52,6 @@ void test_can(){
 	
 	can_receive(&can_rx_msg);
 	
-	printf("Sending: %d%d%d", can_tx_msg.data[0], can_tx_msg.data[1], can_tx_msg.data[2]);
-	printf("Receiving: %d%d%d", can_rx_msg.data[0], can_rx_msg.data[1], can_rx_msg.data[2]);
-	
-	
+	printf("Sending: %d%d%d\r\n", can_tx_msg.data[0], can_tx_msg.data[1], can_tx_msg.data[2]);
+	printf("Receiving: %d%d%d\r\n", can_rx_msg.data[0], can_rx_msg.data[1], can_rx_msg.data[2]);
 }

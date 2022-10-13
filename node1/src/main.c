@@ -12,6 +12,7 @@
 #include "oled_lib.h"
 #include "oled_menu.h"
 #include "mcp2515_lib.h"
+#include "can_lib.h"
 
 /* External interrupts for buttons*/
 ISR (INT0_vect) //LEFT USB-button
@@ -103,17 +104,15 @@ int main(void)
 	oled_setup();
 	calibrate_joystick();
 	spi_setup();
-	//mcp2515_setup_loopback();
+	can_setup();
 	sei(); // Enable global interrupts
 	printf("Setup done\r\n");
 	
 	start_menu();
 	uint8_t status;
 	while(1) {
-// 		status = mcp2515_read_status();
-// 		printf("Status: %d\n", status);
-		//mcp2515_setup_loopback();
-		_delay_ms(250);
+		can_test();
+		_delay_ms(500);
 
    		//adc_read(); // Update ADC-values
    		//uint8_t JS_pos = get_JS_direction();
