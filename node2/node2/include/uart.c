@@ -11,6 +11,7 @@
 
 #include "sam.h"
 #include "uart.h"
+#include "printf_stdarg.h"
 
 //Ringbuffer for receiving multiple characters
 uart_ringbuffer rx_buffer;
