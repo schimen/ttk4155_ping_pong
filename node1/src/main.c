@@ -13,6 +13,7 @@
 #include "oled_menu.h"
 #include "mcp2515_lib.h"
 #include "can_lib.h"
+#include "interrupt.h"
 
 /* External interrupts for buttons*/
 ISR (INT0_vect) //LEFT USB-button
@@ -27,7 +28,32 @@ ISR (INT1_vect) //RIGHT USB-button
 
 ISR (INT2_vect)
 {
-	//Interrupt handler for MCP2515 goes here
+	uint8_t flag = 0b00000011 & mcp_read_byte(MCP_CANINTF); //Holds current interrupt flag
+	printf("MCP Interrupt on flag: %02x \r\n", flag);
+	// Do stuff based on flag
+	
+	if (flag == MCP_RX0IF)
+	{
+		printf("Message received on RXB0");
+		
+		struct can_frame can_rx_msg;
+		while (can_receive(&can_rx_msg))
+		{
+			printf("message received (%d length): ", can_rx_msg.len);
+			for (uint8_t i = 0; i < can_rx_msg.len; i++) {
+				printf("%d, ", can_rx_msg.data[i]);
+			}
+			printf(" from id %d\n", can_rx_msg.id);
+		}
+		printf("\n");
+	}
+	if (flag == MCP_RX1IF)
+	{
+		printf("Message received on RXB1");
+	}
+	
+	// Clear current interrupt flag
+	mcp_bit_modify(MCP_CANINTF,(0xFF & flag), ~(flag));
 }
 
 struct menu_page main_page = {
@@ -100,7 +126,7 @@ int main(void)
 	/*Enable printf */
 	fdevopen(send_character, receive_character);
 	sram_setup();
-	button_setup();
+	interrupt_setup();
 	oled_setup();
 	calibrate_joystick();
 	spi_setup();

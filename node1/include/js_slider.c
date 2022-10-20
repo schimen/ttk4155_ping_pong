@@ -58,31 +58,6 @@ uint8_t get_slider_position(uint8_t val)
 	return (val*100)/255;
 }
 
-/* Setup for USB-board touch-buttons with interrupt on rising edge */
-void button_setup(void)
-{
-	// Set button pins as input
-	DDRD &= ~((1 << LEFT_BUTTON) | (1 << RIGHT_BUTTON)); 
-	DDRE &= ~(1 << JS_BUTTON); 
-	
-	// Set internal pull-up for JS-button
-	PORTE |= (1 << JS_BUTTON);
-	
-	// INT0 and INT1 triggers on rising edge, INT2 triggers on falling edge
- 	MCUCR |= 0x0F; 
- 	
-	 //Enable INT0 and INT1
-	GICR = ((1 << INT0) | (1 << INT1) | (1 << INT2));
-	//GICR = ((1 << INT0) | (1 << INT1));
-	
-	//Flags to detect button press 
-	left_btn_pressed = false;
-	right_btn_pressed = false;
-	JS_btn_pressed = false;
-}
-
-
-/*------------- PLACEHOLDER FUNCTIONS -------------*/
 /* Converts joystick value from ADC to a direction and returns it */
 uint8_t get_JS_direction(void)
 {
@@ -95,6 +70,7 @@ uint8_t get_JS_direction(void)
 	return JS_percent_to_direction(joystick.x_pos, joystick.y_pos);
 }
 
+/*------------- PLACEHOLDER FUNCTIONS -------------*/
 /* Placeholder function for sliders: Converts slider value from ADC to percentage and prints it */
 void silder_service(void)
 {
