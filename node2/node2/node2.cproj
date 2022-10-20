@@ -149,6 +149,30 @@
     <Compile Include="Device_Startup\system_sam3xa.c">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="include\can_controller.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\can_controller.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\can_interrupt.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\can_interrupt.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\printf-stdarg.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\printf-stdarg.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\uart.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\uart.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="src\main.c">
       <SubType>compile</SubType>
     </Compile>

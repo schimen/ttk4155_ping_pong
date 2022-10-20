@@ -13,6 +13,7 @@ int main(void)
 {
     /* Initialize the SAM system */
     SystemInit();
+	PIOA |= 
 
     /* Replace with your application code */
     while (1) 
