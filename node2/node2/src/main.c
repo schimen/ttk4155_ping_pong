@@ -7,6 +7,7 @@
 
 
 #include "sam.h"
+#include "can_controller.h"
 
  #include "../include/uart.h"
  #include "../include/printf_stdarg.h"
@@ -19,7 +20,6 @@ int main(void)
     /* Initialize the SAM system */
     SystemInit();
 	WDT->WDT_MR = WDT_MR_WDDIS; //Disable watchdogtimer
-	
 	configure_uart();
 	printf("yeyyyy\r");
 

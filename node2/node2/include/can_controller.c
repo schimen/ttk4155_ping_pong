@@ -12,7 +12,13 @@
 
 #include "sam.h"
 
-#include "printf_stdarg.h"
+#include "printf-stdarg.h"
+
+
+void can_setup(){
+	uint32_t can_br = (CAN_BR_BRP(41) | CAN_BR_SJW(1) | CAN_BR_PROPAG(2) | CAN_BR_PHASE1(7) | CAN_BR_PHASE2(6));
+	can_init(can_br);
+}
 
 
 /**

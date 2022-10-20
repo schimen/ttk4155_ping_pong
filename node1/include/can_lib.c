@@ -2,8 +2,27 @@
 
 void can_setup() {
 	/* Set up mcp in loopback mode */ 
-	mcp_setup_loopback();
+	// mcp_setup_loopback();
+
+	// set the mcp in config mode
+	mcp_write_byte(MCP_CANCTRL, MODE_CONFIG);
+
+	uint8_t BRP = 0x03; // BRP = 3, TQ = 500ns
+	uint8_t PROPSEG = 0x02; // Propagation segment length
+	uint8_t PS1 = 0x07; // Phase segment 1 length
+	uint8_t PS2 = 0x06; // Phase segment 2 length
 	
+	// Write to CNF1, SJW = 1, BRP = 3
+	mcp_write_byte(MCP_CNF1, (uint8_t) (SJW1 | BRP));
+
+	// Write to CNF2, BTLmode enabled, Phase segment 1 = 7, Propagation segment = 2
+	mcp_write_byte(MCP_CNF2, (uint8_t) (BTLMODE | (PS1 << 3) | PROPSEG));
+	
+	// Write to CNF3, SOF disabled, Wake-up filter disabled, PS2 = 6
+	mcp_write_byte(MCP_CNF3, (uint8_t) (SOF_DISABLE | WAKFIL_DISABLE | PS2));
+	
+	// set the mcp in normal mode
+	mcp_write_byte(MCP_CANCTRL, MODE_NORMAL);
 }
 
 
