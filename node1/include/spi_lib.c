@@ -31,13 +31,8 @@ uint8_t spi_transceiveByte(uint8_t data){
 
 int8_t spi_transceive(uint8_t *tx, uint8_t *rx, uint8_t txLen, uint8_t rxLen){
 	PORTB &= ~(1 << SPI_SS);
-	uint8_t loopLen;
-	if (txLen > rxLen) {
-		loopLen = txLen;
-	}
-	else {
-		loopLen = rxLen + 1;
-	}
+	uint8_t loopLen = txLen + rxLen;
+
 	for (uint8_t i = 0; i < loopLen; i++)
 	{
 		if (i < txLen && tx != NULL) {
@@ -47,12 +42,12 @@ int8_t spi_transceive(uint8_t *tx, uint8_t *rx, uint8_t txLen, uint8_t rxLen){
 			SPDR = 0xFF;
 		}
 		while(!(SPSR & (1 << SPIF)));
-		if (i == 0 || i > rxLen || rx == NULL) {
+		if (i == 0 || i < txLen || rx == NULL) {
 			char flushBuffer;
 			flushBuffer = SPDR;
 		}
 		else {
-			rx[i-1] = SPDR;
+			rx[i-txLen] = SPDR;
 		}
 	}
 	PORTB |= (1 << SPI_SS);

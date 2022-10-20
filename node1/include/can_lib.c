@@ -79,29 +79,21 @@ void can_test()
 		.len=8,
 	};
 	
-	struct can_frame can_rx_msg;
-	
-	for (uint8_t i = 0; i < 127; i++) {
+	for (uint8_t i = 0; i < 10; i++) {
 		printf("Test %d:\n", i);
 		can_tx_msg.id = i;
 		for (uint8_t j = 0; j < can_tx_msg.len; j++) {
 			can_tx_msg.data[j] = i+j;
 		}
+		
 		printf("Sending message (%d length): ", can_tx_msg.len);
+		
 		for (uint8_t i = 0; i < can_tx_msg.len; i++) {
 			printf("%d, ", can_tx_msg.data[i]);
 		}
 		printf(" from id %d\n", can_tx_msg.id);
 		can_write(&can_tx_msg);
+		
 		_delay_ms(1);
-		while (can_receive(&can_rx_msg))
-		{
-			printf("message received (%d length): ", can_rx_msg.len);
-			for (uint8_t i = 0; i < can_rx_msg.len; i++) {
-				printf("%d, ", can_rx_msg.data[i]);
-			}
-			printf(" from id %d\n", can_rx_msg.id);
-		}
-		printf("\n");
 	}
 }

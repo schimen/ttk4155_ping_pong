@@ -59,8 +59,19 @@ uint8_t mcp_read_rx_status() {
 }
 
 void mcp_setup_loopback() {
-	/* */
-	mcp_write_byte(MCP_CANCTRL, MODE_LOOPBACK);
+	mcp_reset();
 	mcp_write_byte(MCP_RXB0CTRL, (0x03 << 5)); // Filter off
-	//mcp_write_byte(MCP_CANINTF, MCP_TX2IF);
+	// Enable interrupt for RXB0 and RXB1 full
+	mcp_write_byte(MCP_CANINTE, (MCP_RX0IF | MCP_RX1IF));
+	mcp_write_byte(MCP_CANCTRL, MODE_LOOPBACK);
+}
+
+/* Setup for normal mode*/ 
+void mcp_setup_normal() 
+{
+	mcp_reset();
+	mcp_write_byte(MCP_RXB0CTRL, (0x03 << 5)); // Filter off
+	// Enable interrupt for RXB0 and RXB1 full
+	mcp_write_byte(MCP_CANINTE, (MCP_RX0IF | MCP_RX1IF));
+	mcp_write_byte(MCP_CANCTRL, MODE_NORMAL);
 }

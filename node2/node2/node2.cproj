@@ -161,10 +161,10 @@
     <Compile Include="include\can_interrupt.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="include\printf-stdarg.c">
+    <Compile Include="include\printf_stdarg.c">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="include\printf-stdarg.h">
+    <Compile Include="include\printf_stdarg.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="include\uart.c">

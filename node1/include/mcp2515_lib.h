@@ -156,6 +156,7 @@ Copyright 2003 Kimberly Otten Software Consulting
 #define MCP_WAKIF		0x40
 #define MCP_MERRF		0x80
 
+
 enum rx_read_mode {
 	RXBUF0_START_ID,
 	RXBUF0_START_DATA,
@@ -197,5 +198,7 @@ uint8_t mcp_read_status();
 uint8_t mcp_read_rx_status();
 
 void mcp_setup_loopback();
+
+void mcp_setup_normal(); 
 
 #endif
