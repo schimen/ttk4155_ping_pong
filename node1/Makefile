@@ -31,11 +31,11 @@ $(BUILD_DIR)/%.o: %.c | $(BUILD_DIR)
 
 $(BUILD_DIR)/src/main.hex: $(OBJECT_FILES) | $(BUILD_DIR)
 	$(CC) $(CFLAGS) $(OBJECT_FILES) -o $(BUILD_DIR)/a.out
-	avr-objcopy -j .text -j .data -O ihex $(BUILD_DIR)/a.out $(BUILD_DIR)/src/main.hex
+	avr-objcopy -j .text -j .data -O ihex $(BUILD_DIR)/a.out $(BUILD_DIR)/main.hex
 
 .PHONY: flash
 flash: $(BUILD_DIR)/src/main.hex
-	avrdude -p $(TARGET_DEVICE) -c $(PROGRAMMER) -U flash:w:$(BUILD_DIR)/src/main.hex:i
+	avrdude -p $(TARGET_DEVICE) -c $(PROGRAMMER) -U flash:w:$(BUILD_DIR)/main.hex:i
 
 .PHONY: clean
 clean:
@@ -48,7 +48,7 @@ erase:
 .PHONY: debug
 debug:
 	if pgrep avarice; then pkill avarice; fi
-	avrdude -p $(TARGET_DEVICE) -c $(PROGRAMMER) -U flash:w:$(BUILD_DIR)/src/main.hex:i
+	avrdude -p $(TARGET_DEVICE) -c $(PROGRAMMER) -U flash:w:$(BUILD_DIR)/main.hex:i
 	x-terminal-emulator -e avarice --edbg --ignore-intr :4242
 	sleep 2
 	avr-gdb -tui -iex "target remote localhost:4242" $(BUILD_DIR)/a.out
