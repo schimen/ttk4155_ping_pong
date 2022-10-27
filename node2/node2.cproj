@@ -137,6 +137,7 @@
       <Value>%24(PackRepoDir)\arm\CMSIS\5.4.0\CMSIS\Core\Include\</Value>
       <Value>%24(PackRepoDir)\atmel\SAM3X_DFP\1.0.50\include</Value>
       <Value>../include</Value>
+      <Value>%24(PackRepoDir)\atmel\SAM3X_DFP\1.0.50\include\component</Value>
     </ListValues>
   </armgcc.compiler.directories.IncludePaths>
   <armgcc.compiler.optimization.level>Optimize debugging experience (-Og)</armgcc.compiler.optimization.level>
@@ -196,6 +197,12 @@
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="include\printf_stdarg.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\pwm_lib.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\pwm_lib.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="include\uart.c">
