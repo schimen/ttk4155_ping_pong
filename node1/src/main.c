@@ -29,29 +29,25 @@ ISR (INT1_vect) //RIGHT USB-button
 ISR (INT2_vect)
 {
 	uint8_t flag = 0b00000011 & mcp_read_byte(MCP_CANINTF); //Holds current interrupt flag
-	printf("MCP Interrupt on flag: %02x \r\n", flag);
+	
+	//printf("MCP Interrupt on flag: %02x \r\n", flag);
 	// Do stuff based on flag
 	
-	if (flag == MCP_RX0IF)
+	if (flag == MCP_RX0IF || flag == MCP_RX1IF) // Message received on RXB0 or RXB1
 	{
-		printf("Message received on RXB0");
-		
 		struct can_frame can_rx_msg;
 		while (can_receive(&can_rx_msg))
 		{
-			printf("message received (%d length): ", can_rx_msg.len);
-			for (uint8_t i = 0; i < can_rx_msg.len; i++) {
-				printf("%d, ", can_rx_msg.data[i]);
-			}
-			printf(" from id %d\n", can_rx_msg.id);
+			printf("CAN message received on buffer %02x \r\n", flag-1);
+			//printf("message received (%d length): ", can_rx_msg.len);
+			// 				for (uint8_t i = 0; i < can_rx_msg.len; i++) {
+			// 					printf("%d, ", can_rx_msg.data[i]);
+			// 				}
+			// 				printf(" from id %d\n", can_rx_msg.id);
+			// 				printf("\n");
+				
 		}
-		printf("\n");
 	}
-	if (flag == MCP_RX1IF)
-	{
-		printf("Message received on RXB1");
-	}
-	
 	// Clear current interrupt flag
 	mcp_bit_modify(MCP_CANINTF,(0xFF & flag), ~(flag));
 }
