@@ -19,6 +19,7 @@ SOURCE_FILES := $(wildcard $(INCLUDE_DIR)/*.c) src/main.c
 CC := avr-gcc
 CFLAGS := -O -std=c11 -DF_CPU=$(CLOCK) -mmcu=$(TARGET_CPU) -ggdb
 CFLAGS += -I$(INCLUDE_DIR)
+CFLAGS += -Wall
 
 OBJECT_FILES = $(SOURCE_FILES:%.c=$(BUILD_DIR)/%.o)
 
