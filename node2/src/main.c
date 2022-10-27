@@ -11,9 +11,12 @@
 #include "uart.h"
 #include "printf_stdarg.h"
 #include "string.h"
+#include "pwm_lib.h"
 
  #define LED0_PIN PIO_PA19 
  #define LED1_PIN PIO_PA20
+ 
+ void LED_setup(void);
 
 int main(void)
 {
@@ -23,13 +26,16 @@ int main(void)
 	configure_uart();
 	can_setup();
 	LED_setup();
+	pwm_setup(); 
 	printf("Node 2 setup done\r");
 	
     while (1) 
     {
 		PIOA->PIO_ODSR |= LED0_PIN;
 		PIOA->PIO_ODSR |= LED1_PIN;
-		CAN0_Handler();	
+		CAN0_Handler();
+
+		
     }
 }
 

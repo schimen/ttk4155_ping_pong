@@ -17,6 +17,8 @@
 
 #include "can_controller.h"
 
+#include "pwm_lib.h"
+
 #define DEBUG_INTERRUPT 1
 
 /**
@@ -51,6 +53,11 @@ void CAN0_Handler( void )
 
 		if(DEBUG_INTERRUPT)printf("message id: %d\n\r", message.id);
 		if(DEBUG_INTERRUPT)printf("message data length: %d\n\r", message.data_length);
+		if (message.data_length >= 2) {
+			
+			pwm_set_duty_cycle(message.data[1], 6);
+			printf("duty cycle: %d\r\n", message.data[1]);
+		}
 		for (int i = 0; i < message.data_length; i++)
 		{
 			if(DEBUG_INTERRUPT)printf("%d ", message.data[i]);
