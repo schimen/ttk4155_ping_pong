@@ -199,6 +199,4 @@ uint8_t mcp_read_rx_status();
 
 void mcp_setup_loopback();
 
-void mcp_setup_normal(); 
-
 #endif
