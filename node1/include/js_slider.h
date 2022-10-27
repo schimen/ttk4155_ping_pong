@@ -13,17 +13,9 @@
 #include <stdbool.h>
 #include "util/delay.h"
 #include "adc_lib.h"
-
-#define LEFT_BUTTON PIND2 //INT0
-#define RIGHT_BUTTON PIND3 //INT1
-#define JS_BUTTON PINE0 //INT2
+#include "interrupt.h"
 
 enum JS_position {DEFAULT, RIGHT, LEFT, UP, DOWN};
-
-//Flags for detecting button presses
-volatile bool left_btn_pressed; 
-volatile bool right_btn_pressed;
-volatile bool JS_btn_pressed;
 
 struct Joystick_t {
 	uint8_t  x_adc; // x-value from ADC
@@ -53,9 +45,6 @@ uint8_t JS_percent_to_direction(int8_t x_val, int8_t y_val);
 
 /* Silder ADC-value to percentage */
 uint8_t get_slider_position(uint8_t val);
-
-/* Setup for USB-board touch-buttons with interrupt on rising edge */
-void button_setup(void);
 
 /*------------- PLACEHOLDER FUNCTIONS -------------*/
 /* Converts joystick value from ADC to a direction and returns it */

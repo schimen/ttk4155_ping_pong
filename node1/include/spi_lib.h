@@ -1,6 +1,7 @@
 #ifndef SPI_LIB_H_
 #define SPI_LIB_H_
 
+#include <stdio.h>
 #include <avr/io.h>
 
 #define SPI_SS		PB4 // Slave select
