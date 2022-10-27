@@ -9,6 +9,9 @@ pkgs.mkShell {
     pkgsCross.avr.buildPackages.gcc
     avrdude
     avarice
+    gcc-arm-embedded
+    killall
+    openocd
     doxygen
   ];
 }
