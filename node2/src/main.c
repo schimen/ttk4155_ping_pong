@@ -8,9 +8,9 @@
 
 #include "sam.h"
 #include "can_controller.h"
-
- #include "../include/uart.h"
- #include "../include/printf_stdarg.h"
+#include "uart.h"
+#include "printf_stdarg.h"
+#include "string.h"
 
  #define LED0_PIN PIO_PA19 
  #define LED1_PIN PIO_PA20
@@ -21,12 +21,15 @@ int main(void)
     SystemInit();
 	WDT->WDT_MR = WDT_MR_WDDIS; //Disable watchdogtimer
 	configure_uart();
-	printf("yeyyyy\r");
-
+	can_setup();
+	LED_setup();
+	printf("Node 2 setup done\r");
+	
     while (1) 
     {
 		PIOA->PIO_ODSR |= LED0_PIN;
-		PIOA->PIO_ODSR |= LED1_PIN;	
+		PIOA->PIO_ODSR |= LED1_PIN;
+		CAN0_Handler();	
     }
 }
 
