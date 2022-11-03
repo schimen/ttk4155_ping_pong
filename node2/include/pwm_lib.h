@@ -11,9 +11,8 @@
 
 #include "sam.h"
 #include <stdio.h>
-#include "pwm.h"
 
-void pwm_setup();
+int pwm_setup();
 void pwm_set_duty_cycle(uint8_t duty_cycle, uint8_t channel);
 
 
