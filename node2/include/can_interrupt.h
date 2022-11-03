@@ -11,7 +11,18 @@
 
 #ifndef CAN_INTERRUPT_H_
 #define CAN_INTERRUPT_H_
-void CAN0_Handler       ( void );
+#include "console_lib.h"
+
+typedef struct console_data_t
+{
+	uint8_t dir_joystick;
+	uint8_t l_button;
+	uint8_t r_button;
+	uint8_t l_slider;
+	uint8_t r_slider;
+} CONSOLE_DATA;
+
+void CAN0_Handler(void);
 
 
 

@@ -7,13 +7,16 @@
 
 
 #include "sam.h"
-#include "can_controller.h"
 #include "uart.h"
-#include "printf_stdarg.h"
 #include "string.h"
+#include "printf_stdarg.h"
+#include "can_controller.h"
+#include "console_lib.h"
 
- #define LED0_PIN PIO_PA19 
- #define LED1_PIN PIO_PA20
+#define LED0_PIN PIO_PA19 
+#define LED1_PIN PIO_PA20
+
+void LED_setup(void);
 
 int main(void)
 {
@@ -26,10 +29,8 @@ int main(void)
 	printf("Node 2 setup done\r");
 	
     while (1) 
-    {
-		PIOA->PIO_ODSR |= LED0_PIN;
-		PIOA->PIO_ODSR |= LED1_PIN;
-		CAN0_Handler();	
+    {	
+		CAN0_Handler();
     }
 }
 
@@ -43,4 +44,7 @@ void LED_setup(void)
 		PIOA->PIO_PUDR |= (LED0_PIN | LED1_PIN);
 		// enable LED io to be written directly
 		PIOA->PIO_OWER = (LED0_PIN | LED1_PIN);
+		//Turn on LEDs
+		PIOA->PIO_ODSR |= LED0_PIN;
+		PIOA->PIO_ODSR |= LED1_PIN;
 }

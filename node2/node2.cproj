@@ -192,6 +192,12 @@
     <Compile Include="include\can_interrupt.h">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="include\console_lib.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\console_lib.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="include\printf_stdarg.c">
       <SubType>compile</SubType>
     </Compile>
