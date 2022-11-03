@@ -8,35 +8,22 @@
 #include "pwm_lib.h"
 
 int pwm_setup(){
-	printf("Set up pwm\n");
-	// PWM on pin PC18, PWM channel 6H
+	// Sets up PWM on pin PC18, PWM channel 6H
 	
-	// Enable peripheral clock
+	// Enable PWM in PMC and wait for register to be set
 	PMC->PMC_PCER1 |= PMC_PCER1_PID36;
-	
-	// Check that
 	while((PMC->PMC_PCSR1 & PMC_PCSR1_PID36) == 0);
-	printf("Clock is now set\n");
 
 	// Disable PIOC18
 	PIOC->PIO_PDR |= PIO_PDR_P18;
-
-	// Check that PC18 was set to peripheral output (bit PSR bit 18 set to 0)
-	if (PIOC->PIO_PSR & PIO_PSR_P18) {
-		printf("PC18 could not be set to peripheral output\n");
-		return -1;
-	}
 	
 	// Choose peripheral B
 	PIOC->PIO_ABSR |= PIO_ABSR_P18;
 	
-	printf("A/B mode %d\n", ((PIOC->PIO_ABSR & PIO_ABSR_P18) >> 18)); 
-	
-
 	// Disable PWM write protect for register group 0, 1, 2, 3, 4 and 5
 	PWM->PWM_WPCR = (PWM_WPCR_WPCMD(0) | (0x3F << 1));
 
-	// Disble pwm chnnel 6
+	// Disable PWM channel 6
 	PWM->PWM_DIS = (1 << 6);
 	
 	// PWM clock config
@@ -58,12 +45,16 @@ int pwm_setup(){
 	
 	// Enable PWM Channel 6
 	PWM->PWM_ENA = (1 << 6);
+	
+	// Wait for PWM channel enable
+	while((PWM->PWM_SR & (1 << 6)) == 0);
+	
 	if (PWM->PWM_SR & (1 << 6)){
-		printf("PWM 6 enabled\r");
+		printf("PWM 6 enabled\n\r");
 		return 0;
 	}
 	else{
-		printf("PWM 6 not enabled, %d", (PWM->PWM_SR & 0xFF));
+		printf("PWM 6 not enabled, %d \n\r", (PWM->PWM_SR & 0xFF));
 		return -1;
 	}
 }
@@ -77,7 +68,7 @@ void pwm_set_duty_cycle(uint8_t duty_cycle, uint8_t channel){
 	uint32_t cprd = PWM->PWM_CH_NUM[channel].PWM_CPRD;
 	uint32_t dc_cdty = (duty_cycle*cprd)/100;
 	PWM->PWM_CH_NUM[channel].PWM_CDTYUPD = PWM_CDTY_CDTY(dc_cdty);
+	
+	// Trigger duty cycle update on next period
 	PWM->PWM_SCUC = PWM_SCUC_UPDULOCK;
-	
-	
 }
