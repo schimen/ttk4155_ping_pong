@@ -41,11 +41,16 @@ int main(void)
 	can_setup();
 	LED_setup();
 	pwm_setup(); 
-	printf("Node 2 setup done\r");
-	
+	ir_setup();
+	printf("Node 2 setup done\n\r");
+	uint8_t infrared_counter;
     while (1) 
     {	
 		JS_Handler(console_data.dir_joystick);
+		if(PIOA->PIO_ISR & IR_PIN){
+			infrared_counter++;
+			printf("infrared: %d \n\r", infrared_counter);
+		}
     }
 }
 

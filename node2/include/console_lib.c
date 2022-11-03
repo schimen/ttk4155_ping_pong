@@ -31,3 +31,25 @@ void JS_Handler(uint8_t direction)
 		lastDirection = direction;
 	}
 }
+
+void ir_setup(){
+	// Setup of the infrared sensor
+	// Enable PMC clock
+	PMC->PMC_PCER0 |= PMC_PCER0_PID11;
+	// Enable pin
+	PIOA->PIO_PER |= IR_PIN;
+	while((PIOA->PIO_PSR & IR_PIN) == 0);
+	// Disable output
+	PIOA->PIO_ODR |= IR_PIN;
+	// Enable input glitch and debounce filter
+	PIOA->PIO_IFER |= IR_PIN;
+	PIOA->PIO_DIFSR |= IR_PIN;
+	// Enable interrupt on pin
+	PIOA->PIO_IER |= IR_PIN;
+	PIOA->PIO_ESR |= IR_PIN; // Edge detection interrupt enable
+	PIOA->PIO_FELLSR |= IR_PIN; // Falling edge
+}
+
+void PIOA_Handler(void){
+	printf("IR test!!!\n\r");
+}
