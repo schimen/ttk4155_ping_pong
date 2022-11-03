@@ -12,6 +12,7 @@
 #include "printf_stdarg.h"
 #include "can_controller.h"
 #include "console_lib.h"
+#include "pwm_lib.h"
 
 #define DEBUG_INTERRUPT 0
 
@@ -39,6 +40,7 @@ int main(void)
 	configure_uart();
 	can_setup();
 	LED_setup();
+	pwm_setup(); 
 	printf("Node 2 setup done\r");
 	
     while (1) 

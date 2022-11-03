@@ -14,6 +14,8 @@
 #include "printf_stdarg.h"
 #include "can_controller.h"
 #include "console_lib.h"
+#include "pwm_lib.h"
 
+#define DEBUG_INTERRUPT 1
 
 
