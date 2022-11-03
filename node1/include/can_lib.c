@@ -1,16 +1,8 @@
 #include "can_lib.h"
 
 void can_setup() {
-	/* Set up mcp in loopback mode */ 
-	// mcp_setup_loopback();
-
 	// set the mcp in config mode
 	mcp_write_byte(MCP_CANCTRL, MODE_CONFIG);
-
-	uint8_t BRP = 0x03; // BRP = 3, TQ = 500ns
-	uint8_t PROPSEG = 0x02; // Propagation segment length
-	uint8_t PS1 = 0x07; // Phase segment 1 length
-	uint8_t PS2 = 0x06; // Phase segment 2 length
 	
 	// Write to CNF1, SJW = 1, BRP = 3
 	mcp_write_byte(MCP_CNF1, (uint8_t) (SJW1 | BRP));
@@ -20,6 +12,12 @@ void can_setup() {
 	
 	// Write to CNF3, SOF disabled, Wake-up filter disabled, PS2 = 6
 	mcp_write_byte(MCP_CNF3, (uint8_t) (SOF_DISABLE | WAKFIL_DISABLE | PS2));
+	
+	// Filter off
+	mcp_write_byte(MCP_RXB0CTRL, (0x03 << 5));
+	 
+	// Enable interrupt for RXB0 and RXB1 full
+	mcp_write_byte(MCP_CANINTE, (MCP_RX0IF | MCP_RX1IF));
 	
 	// set the mcp in normal mode
 	mcp_write_byte(MCP_CANCTRL, MODE_NORMAL);
@@ -93,26 +91,26 @@ uint8_t can_receive(struct can_frame *can_msg)
 void can_test()
 {
 	struct can_frame can_tx_msg = {
-		.data={ 0, 0, 0, 0, 0, 0, 0, 0},
+		.data={ 0, 0, 0, 0, 0, 0, 0},
 		.id=123,
-		.len=8,
+		.len=7
 	};
 	
-	for (uint8_t i = 0; i < 10; i++) {
-		printf("Test %d:\n", i);
+	for (uint8_t i = 0; i < 255; i++) {
+		//printf("Test %d:\n", i);
 		can_tx_msg.id = i;
 		for (uint8_t j = 0; j < can_tx_msg.len; j++) {
 			can_tx_msg.data[j] = i+j;
 		}
 		
-		printf("Sending message (%d length): ", can_tx_msg.len);
+		//printf("Sending message (%d length): ", can_tx_msg.len);
 		
 		for (uint8_t i = 0; i < can_tx_msg.len; i++) {
-			printf("%d, ", can_tx_msg.data[i]);
+			//printf("%d, ", can_tx_msg.data[i]);
 		}
-		printf(" from id %d\n", can_tx_msg.id);
+		//printf(" from id %d\n", can_tx_msg.id);
 		can_write(&can_tx_msg);
 		
-		_delay_ms(1);
+		_delay_ms(100);
 	}
 }

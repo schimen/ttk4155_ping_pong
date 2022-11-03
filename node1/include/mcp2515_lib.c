@@ -19,7 +19,7 @@ void mcp_read_rxbuffer(uint8_t read_mode, uint8_t * buffer, uint8_t len) {
 
 
 void mcp_write_byte(uint8_t address, uint8_t data) {
-	/* Write */
+	/* Transmit write instruction, address and data */
 	uint8_t tx[3] = {MCP_WRITE, address, data};
 	spi_transceive(tx, NULL, 3, 0);
 }
@@ -35,6 +35,7 @@ void mcp_load_txbuffer(uint8_t write_mode, uint8_t * data, uint8_t len) {
 }
 
 void mcp_request_to_send() {
+	/* Request to empty MCP TX buffer 0 */
 	spi_transceiveByte(MCP_RTS_TX0);
 }
 
@@ -59,19 +60,10 @@ uint8_t mcp_read_rx_status() {
 }
 
 void mcp_setup_loopback() {
+	/* Set the mcp in loopback mode for testing purposes */
 	mcp_reset();
 	mcp_write_byte(MCP_RXB0CTRL, (0x03 << 5)); // Filter off
 	// Enable interrupt for RXB0 and RXB1 full
 	mcp_write_byte(MCP_CANINTE, (MCP_RX0IF | MCP_RX1IF));
 	mcp_write_byte(MCP_CANCTRL, MODE_LOOPBACK);
-}
-
-/* Setup for normal mode*/ 
-void mcp_setup_normal() 
-{
-	mcp_reset();
-	mcp_write_byte(MCP_RXB0CTRL, (0x03 << 5)); // Filter off
-	// Enable interrupt for RXB0 and RXB1 full
-	mcp_write_byte(MCP_CANINTE, (MCP_RX0IF | MCP_RX1IF));
-	mcp_write_byte(MCP_CANCTRL, MODE_NORMAL);
 }

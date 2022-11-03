@@ -7,13 +7,15 @@
 #include "util/delay.h"
 #include "uart_lib.h"
 #include "sram_lib.h"
-#include "adc_lib.h"
 #include "js_slider.h"
 #include "oled_lib.h"
 #include "oled_menu.h"
 #include "mcp2515_lib.h"
 #include "can_lib.h"
 #include "interrupt.h"
+
+volatile bool left_btn_pressed = false;
+volatile bool right_btn_pressed = false;
 
 /* External interrupts for buttons*/
 ISR (INT0_vect) //LEFT USB-button
@@ -23,76 +25,48 @@ ISR (INT0_vect) //LEFT USB-button
 
 ISR (INT1_vect) //RIGHT USB-button
 {
-	run_option(); //select menu-item
+	right_btn_pressed = true;
 }
 
 ISR (INT2_vect)
 {
 	uint8_t flag = 0b00000011 & mcp_read_byte(MCP_CANINTF); //Holds current interrupt flag
-	printf("MCP Interrupt on flag: %02x \r\n", flag);
+	
+	//printf("MCP Interrupt on flag: %02x \r\n", flag);
 	// Do stuff based on flag
 	
-	if (flag == MCP_RX0IF)
+	if (flag == MCP_RX0IF || flag == MCP_RX1IF) // Message received on RXB0 or RXB1
 	{
-		printf("Message received on RXB0");
-		
 		struct can_frame can_rx_msg;
 		while (can_receive(&can_rx_msg))
 		{
-			printf("message received (%d length): ", can_rx_msg.len);
-			for (uint8_t i = 0; i < can_rx_msg.len; i++) {
-				printf("%d, ", can_rx_msg.data[i]);
-			}
-			printf(" from id %d\n", can_rx_msg.id);
+			printf("CAN message received on buffer %02x \r\n", flag-1);
+			//printf("message received (%d length): ", can_rx_msg.len);
+			// 				for (uint8_t i = 0; i < can_rx_msg.len; i++) {
+			// 					printf("%d, ", can_rx_msg.data[i]);
+			// 				}
+			// 				printf(" from id %d\n", can_rx_msg.id);
+			// 				printf("\n");
+				
 		}
-		printf("\n");
 	}
-	if (flag == MCP_RX1IF)
-	{
-		printf("Message received on RXB1");
-	}
-	
 	// Clear current interrupt flag
 	mcp_bit_modify(MCP_CANINTF,(0xFF & flag), ~(flag));
 }
 
 struct menu_page main_page = {
-    .title = "Main menu",
+    .title = "Menu",
     .options = {
-        { .name = "First sub-menu", .callback = &change_menu },
-        { .name = "Second sub-menu", .callback = &change_menu },
-		{ .name = "Exit", .callback = &oled_clear }
-    }
-};
-
-struct menu_page sub_page_1 = {
-    .title = "Sub menu 1",
-    .options = {
-        { .name = "Main menu",  .callback = &change_menu },
-        { .name = "Sub-menu 2", .callback = &change_menu }
-    }
-};
-
-struct menu_page sub_page_2 = {
-    .title = "Sub menu 2",
-    .options = {
-        { .name = "Main menu",  .callback = &change_menu },
-        { .name = "Sub-menu 1", .callback = &change_menu }
+        { .name = "SRAM test", .callback = &sram_test },
+        { .name = "CAN test", .callback = &can_test },
     }
 };
 
 void start_menu() {
-	// Pointers to callback parameters. TODO: fix this
-    main_page.options[0].callback_parameter = &sub_page_1;
-    main_page.options[1].callback_parameter = &sub_page_2;
-    sub_page_1.options[0].callback_parameter = &main_page;
-    sub_page_1.options[1].callback_parameter = &sub_page_2;
-    sub_page_2.options[0].callback_parameter = &main_page;
-    sub_page_2.options[1].callback_parameter = &sub_page_1;
     change_menu(&main_page);
 }
 
-void menu_service(uint8_t direction){
+void menu_service(uint8_t direction, bool run_option_bool){
 	
 	switch (direction)
 	{
@@ -118,6 +92,9 @@ void menu_service(uint8_t direction){
 			_delay_ms(100);
 			break;
 	}
+	if (run_option_bool) {
+		run_option();
+	}
 }
 
 int main(void)
@@ -132,19 +109,28 @@ int main(void)
 	spi_setup();
 	can_setup();
 	sei(); // Enable global interrupts
-	printf("Setup done\r\n");
-	
 	start_menu();
-	can_test();
+	printf("Setup done\r\n");
+
+	struct can_frame event_msg;
+	event_msg.len = 3;
+	event_msg.id = 1;
 	while(1) {
-
-   		//adc_read(); // Update ADC-values
-   		//uint8_t JS_pos = get_JS_direction();
-		//menu_service(JS_pos);
-
-//   		silder_service();
-//  		button_service();
-//   		_delay_ms(500);'
+		// Update ADC-values
+   		js_slider_update();
+		// Act on new input at new event
+		if (new_event(left_btn_pressed, right_btn_pressed)) {
+			// React to event in menu
+			menu_service(joystick_direction(), left_btn_pressed);
+			// Send event data to node 2
+			write_event_data(
+				event_msg.data, left_btn_pressed, right_btn_pressed
+			);
+			left_btn_pressed = false;
+			right_btn_pressed = false;
+			can_write(&event_msg);
+		}
+		_delay_ms(100);
 	}
 }
 

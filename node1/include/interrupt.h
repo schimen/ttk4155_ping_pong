@@ -15,11 +15,6 @@
 #define RIGHT_BUTTON PIND3 //INT1
 #define JS_BUTTON PINE0 //INT2
 
-//Flags for detecting button presses
-volatile bool left_btn_pressed;
-volatile bool right_btn_pressed;
-volatile bool JS_btn_pressed;
-
 void interrupt_setup(void);
 
 #endif /* INTERRUPT_H_ */

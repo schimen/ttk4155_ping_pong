@@ -25,9 +25,4 @@ void interrupt_setup(void)
 	
 	// Enable INT0, INT1 and INT2
 	GICR = ((1 << INT0) | (1 << INT1) | (1 << INT2));
-	
-	//Flags to detect button press
-	left_btn_pressed = false;
-	right_btn_pressed = false;
-	JS_btn_pressed = false;
 }
