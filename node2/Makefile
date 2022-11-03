@@ -23,6 +23,7 @@ CFLAGS:= -mcpu=cortex-m3 -mthumb -g -std=c11 -MMD
 CFLAGS+= -I sam -I sam/sam3x/include -I sam/sam3x/source -I sam/cmsis -I .
 CFLAGS+= -I$(INCLUDE_DIR)
 CFLAGS+= -D $(MCUTYPE)
+CFLAGS+= -Wall
 
 .DEFAULT_GOAL := $(ELF)
 # compile and generate dependancy info
