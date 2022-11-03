@@ -8,22 +8,26 @@
 
 void JS_Handler(uint8_t direction)
 {	
-	switch (direction)
+	if (direction != lastDirection)
 	{
-		case DEFAULT:
-		printf("DEFAULT\r");
-		break;
-		case RIGHT:
-		printf("RIGHT\r");
-		break;
-		case LEFT:
-		printf("LEFT\r");
-		break;
-		case UP:
-		printf("UP\r");
-		break;
-		case DOWN:
-		printf("DOWN\r");
-		break;
+		switch (direction)
+		{
+			case DEFAULT:
+			printf("DEFAULT\n\r");
+			break;
+			case RIGHT:
+			printf("RIGHT\n\r");
+			break;
+			case LEFT:
+			printf("LEFT\n\r");
+			break;
+			case UP:
+			printf("UP\n\r");
+			break;
+			case DOWN:
+			printf("DOWN\n\r");
+			break;
+		}
+		lastDirection = direction;
 	}
 }

@@ -12,7 +12,7 @@
 
 enum JS_direction {DEFAULT, RIGHT, LEFT, UP, DOWN};
 
-
+uint8_t lastDirection;
 
 void JS_Handler(uint8_t direction);
 
