@@ -8,26 +8,34 @@
 
 void JS_Handler(uint8_t direction)
 {	
-	if (direction != lastDirection)
+	switch (direction)
 	{
-		switch (direction)
+		case DEFAULT:
+		//printf("DEFAULT\n\r");
+		break;
+		case RIGHT:
+		if (currentServoPos > 0)
 		{
-			case DEFAULT:
-			printf("DEFAULT\n\r");
-			break;
-			case RIGHT:
-			printf("RIGHT\n\r");
-			break;
-			case LEFT:
-			printf("LEFT\n\r");
-			break;
-			case UP:
-			printf("UP\n\r");
-			break;
-			case DOWN:
-			printf("DOWN\n\r");
-			break;
+			currentServoPos--;
+			servo_set_pos(currentServoPos, 6);
+			ms_delay(20);
 		}
-		lastDirection = direction;
+		//printf("RIGHT\n\r");
+		break;
+		case LEFT:
+		if (currentServoPos < 180)
+		{
+			currentServoPos++;
+			servo_set_pos(currentServoPos, 6);
+			ms_delay(20);
+		}
+		//printf("LEFT\n\r");
+		break;
+		case UP:
+		printf("UP\n\r");
+		break;
+		case DOWN:
+		printf("DOWN\n\r");
+		break;
 	}
 }

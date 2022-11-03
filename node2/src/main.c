@@ -5,7 +5,6 @@
  * Author : joerg
  */ 
 
-
 #include "sam.h"
 #include "uart.h"
 #include "string.h"
@@ -13,22 +12,14 @@
 #include "can_controller.h"
 #include "console_lib.h"
 #include "pwm_lib.h"
+#include "systick_lib.h"
 
 #define DEBUG_INTERRUPT 0
-
 #define LED0_PIN PIO_PA19 
 #define LED1_PIN PIO_PA20
 
-typedef struct console_data_t
-{
-	uint8_t dir_joystick;
-	uint8_t l_button;
-	uint8_t r_button;
-	uint8_t l_slider;
-	uint8_t r_slider;
-} CONSOLE_DATA;
-
 CONSOLE_DATA console_data;
+uint32_t prevMillis = 0;
 
 void LED_setup(void);
 
@@ -40,12 +31,18 @@ int main(void)
 	configure_uart();
 	can_setup();
 	LED_setup();
-	pwm_setup(); 
+	pwm_setup();
+	SysTick_Config(10500); //1ms in between ticks
 	printf("Node 2 setup done\r");
+	prevMillis = getMillis();
 	
     while (1) 
     {	
-		JS_Handler(console_data.dir_joystick);
+		if (getMillis() >= prevMillis + 20)
+		{
+			JS_Handler(console_data.dir_joystick);
+			prevMillis = getMillis();
+		}
     }
 }
 
@@ -105,26 +102,25 @@ void CAN0_Handler()
 	if(can_sr & CAN_SR_MB0)
 	{
 		//if(DEBUG_INTERRUPT) printf("CAN0 MB0 ready to send \n\r");
-		
-	//Disable interrupt
+		//Disable interrupt
 		CAN0->CAN_IDR = CAN_IER_MB0;
-
 	}
 
 	if(can_sr & CAN_SR_ERRP)
 	{
 		if(DEBUG_INTERRUPT)printf("CAN0 ERRP error\n\r");
-
 	}
+	
 	if(can_sr & CAN_SR_TOVF)
 	{
 		if(DEBUG_INTERRUPT)printf("CAN0 timer overflow\n\r");
-
 	}
 	
 	NVIC_ClearPendingIRQ(ID_CAN0);
 	//sei();*/
 }
+
+
 
 void LED_setup(void)
 {

@@ -187,12 +187,6 @@
     <Compile Include="include\can_controller.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="include\can_interrupt.c">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="include\can_interrupt.h">
-      <SubType>compile</SubType>
-    </Compile>
     <Compile Include="include\console_lib.c">
       <SubType>compile</SubType>
     </Compile>
@@ -209,6 +203,12 @@
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="include\pwm_lib.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\systick_lib.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\systick_lib.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="include\uart.c">
