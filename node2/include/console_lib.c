@@ -56,7 +56,10 @@ void ir_setup(){
 	PIOA->PIO_IER |= IR_PIN;
 	PIOA->PIO_ESR |= IR_PIN; // Edge detection interrupt enable
 	PIOA->PIO_FELLSR |= IR_PIN; // Falling edge
+	
+	NVIC_EnableIRQ(PIOA_IRQn); // Enable interrupt in NVIC
 }
+
 
 void PIOA_Handler(void){
 	printf("IR test!!!\n\r");
