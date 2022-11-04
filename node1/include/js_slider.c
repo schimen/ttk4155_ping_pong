@@ -88,7 +88,7 @@ uint8_t get_JS_direction(void) {
 }
 
 /* Silder ADC-value to percentage */
-uint8_t get_slider_position(uint8_t val) { return (val * 100) / 255; }
+uint8_t get_slider_position(uint8_t val) { return (val * 100)/ 255; }
 
 void js_slider_update(void) {
   volatile char *adc = (char *)ADC_START_ADR;
