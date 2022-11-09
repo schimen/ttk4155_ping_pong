@@ -193,6 +193,18 @@
     <Compile Include="include\console_lib.h">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="include\motor.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\motor.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\pid.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="include\pid.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="include\printf_stdarg.c">
       <SubType>compile</SubType>
     </Compile>
