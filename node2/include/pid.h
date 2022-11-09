@@ -9,11 +9,14 @@
 #ifndef PID_H_
 #define PID_H_
 
+
 #include <stdio.h>
 #include "sam.h"
 
-#define MAX_U   100
-#define MAX_UI  50
+
+#define MAX_U           12800   // 100% * GAIN_SCALING
+#define MAX_UI          6400    // 
+#define GAIN_SCALING    128
 
 
 typedef struct pid_t
@@ -25,16 +28,12 @@ typedef struct pid_t
     uint8_t Td;     // Derivative term time constant
 
     uint8_t sampling_interval;
-    uint8_t alpha;
     uint8_t beta;
 
+    int16_t prev_u_i;
+    int16_t prev_u_d; 
 
-    int16_t u_p;
-    int16_t u_i[2];
-    int16_t u_d[2];    
-
-    int16_t e;      // error e = r-y
-    int16_t y[2];   // current and previous process value
+    int8_t prev_y;  // previous process value
 };
 
 
