@@ -12,13 +12,15 @@ void JS_Handler(uint8_t direction)
 	{
 		case DEFAULT:
 		//printf("DEFAULT\n\r");
+		currentServoPos = 90;
+		servo_set_pos(currentServoPos,6);
 		break;
 		case RIGHT:
 		if (currentServoPos > 0)
 		{
 			currentServoPos--;
 			servo_set_pos(currentServoPos, 6);
-			ms_delay(20);
+			
 		}
 		//printf("RIGHT\n\r");
 		break;
@@ -27,7 +29,7 @@ void JS_Handler(uint8_t direction)
 		{
 			currentServoPos++;
 			servo_set_pos(currentServoPos, 6);
-			ms_delay(20);
+			
 		}
 		//printf("LEFT\n\r");
 		break;
@@ -68,7 +70,7 @@ void ir_setup(){
 	}
 	PIOA->PIO_FELLSR |= IR_PIN; // Falling edge
 	
-	NVIC_EnableIRQ(PIOA_IRQn); // Enable interrupt in NVIC
+	//NVIC_EnableIRQ(PIOA_IRQn); // Enable interrupt in NVIC
 }
 
 
