@@ -14,15 +14,22 @@
 #include "pwm_lib.h"
 #include "systick_lib.h"
 #include "motor.h"
+#include "pid.h"
 
 #define DEBUG_INTERRUPT 0
 #define LED0_PIN PIO_PA19 
 #define LED1_PIN PIO_PA20
 
+
+
 CONSOLE_DATA console_data;
+PID_DATA pid_data;
+
 uint32_t prevMillis = 0;
 
 void LED_setup(void);
+
+void pid_handler(uint8_t setpoint);
 
 int main(void)
 {
@@ -32,22 +39,25 @@ int main(void)
 	WDT->WDT_MR = WDT_MR_WDDIS; //Disable watchdogtimer
 	configure_uart();
 	printf("starting setup\n\r");
+	SysTick_Config(10500); //1ms in between ticks
 	can_setup();
 	LED_setup();
 	pwm_setup();
 	ir_setup();
 	motor_setup();
-	SysTick_Config(10500); //1ms in between ticks
+	pid_tune(&pid_data, 1, 100, 0, 10);
+	
 	printf("Node 2 setup done\n\r");
 	prevMillis = getMillis();
 	
+	//encoder_reset();
+	
     while (1) 
     {	
-		if (getMillis() >= prevMillis + 2000)
+		if (getMillis() >= prevMillis + PID_SAMPLING_INTERVAL_MS)
 		{
-			//JS_Handler(console_data.dir_joystick);
-			encoder = encoder_read();
-			printf("encoder pos: %d \n\r", encoder);
+			JS_Handler(console_data.dir_joystick);
+			pid_handler(console_data.l_slider);
 			prevMillis = getMillis();
 			
 		}
@@ -95,7 +105,7 @@ void CAN0_Handler()
 			console_data.dir_joystick = message.data[0] & 0x07;
 			console_data.r_button = (message.data[0] >> 3) & 0x01;
 			console_data.l_button = (message.data[0] >> 4) & 0x01;
-			console_data.l_slider = message.data[1];
+			console_data.l_slider = 100-message.data[1];
 			console_data.r_slider = message.data[2];
 		
 			if(DEBUG_INTERRUPT)printf("Console values: \n\r");
@@ -143,4 +153,22 @@ void LED_setup(void)
 		//Turn on LEDs
 		PIOA->PIO_ODSR |= LED0_PIN;
 		PIOA->PIO_ODSR |= LED1_PIN;
+}
+
+void pid_handler(uint8_t setpoint){
+	// Measure motor position
+	uint8_t position = encoder_get_position();
+	//printf("position: %d \n\r", position);
+	int16_t u = pid_controller(&pid_data, setpoint, position);
+	if (u > 100) { u = 100;}
+	if (u < -100) { u = -100;}
+	pid_data.u = u;
+	
+	if (u > 0){
+		set_motor_direction(MOTOR_LEFT);
+	}
+	if (u < 0){
+		set_motor_direction(MOTOR_RIGHT);
+	}
+	set_motor_speed(u);
 }
