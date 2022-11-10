@@ -4,7 +4,7 @@
  * Created: 20.10.2022 10:02:51
  * Author : joerg
  */ 
-
+#include <stdbool.h>
 #include "sam.h"
 #include "uart.h"
 #include "string.h"
@@ -26,6 +26,10 @@ CONSOLE_DATA console_data;
 PID_DATA pid_data;
 
 uint32_t prevMillis = 0;
+uint32_t startTime = 0;
+
+volatile bool gameRunning = false;
+volatile bool gameOver = false;
 
 void LED_setup(void);
 
@@ -34,7 +38,6 @@ void pid_handler(uint8_t setpoint);
 int main(void)
 {
     /* Initialize the SAM system */
-	
     SystemInit();
 	WDT->WDT_MR = WDT_MR_WDDIS; //Disable watchdogtimer
 	configure_uart();
@@ -46,23 +49,39 @@ int main(void)
 	ir_setup();
 	motor_setup();
 	pid_tune(&pid_data, 1, 100, 0, 10);
-	
+	solonoid_setup();
 	printf("Node 2 setup done\n\r");
 	prevMillis = getMillis();
 	
 	//encoder_reset();
 	
     while (1) 
-    {	
-		if (getMillis() >= prevMillis + PID_SAMPLING_INTERVAL_MS)
+    {		
+		if (console_data.r_button && gameRunning == false)
 		{
-			JS_Handler(console_data.dir_joystick);
-			pid_handler(console_data.l_slider);
-			prevMillis = getMillis();
-			
+			printf("START GAME\n\r");
+			gameRunning = true;
+			startTime = getMillis();
 		}
-    }
-}
+		
+		while(gameRunning)
+		{
+			if (getMillis() >= prevMillis + PID_SAMPLING_INTERVAL_MS)
+			{
+				JS_Handler(console_data.dir_joystick);
+				pid_handler(console_data.l_slider);
+				prevMillis = getMillis();
+			}
+			if (gameOver)
+			{
+				uint16_t score =  (getMillis() - startTime) / 1000;
+				printf("Your score: %d \n\r", score);
+				gameRunning = false;
+				gameOver = false;
+			}
+		}
+    } //end while(1)
+} //end main
 
 
 /**
@@ -138,7 +157,14 @@ void CAN0_Handler()
 	//sei();*/
 }
 
-
+void PIOA_Handler(void)
+{
+	if (((PIOA->PIO_ISR & IR_PIN) == IR_PIN) && gameRunning == true)
+	{
+			printf("GAME OVER\n\r");
+			gameOver = true;
+	}
+}
 
 void LED_setup(void)
 {

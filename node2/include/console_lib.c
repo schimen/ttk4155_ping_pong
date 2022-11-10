@@ -22,7 +22,6 @@ void JS_Handler(uint8_t direction)
 			servo_set_pos(currentServoPos, 6);
 			
 		}
-		//printf("RIGHT\n\r");
 		break;
 		case LEFT:
 		if (currentServoPos < 180)
@@ -31,28 +30,41 @@ void JS_Handler(uint8_t direction)
 			servo_set_pos(currentServoPos, 6);
 			
 		}
-		//printf("LEFT\n\r");
 		break;
 		case UP:
-		printf("UP\n\r");
+		PIOA->PIO_CODR = SOLO_PIN; //BOUNCE!
+		ms_delay(200);
+		PIOA->PIO_SODR = SOLO_PIN;
 		break;
 		case DOWN:
 		printf("DOWN\n\r");
 		break;
 	}
 }
-
+/*
+* Setup of the infrared sensor
+*/
 void ir_setup(){
-	// Setup of the infrared sensor
-	// Enable PMC clock
-	PMC->PMC_PCER0 |= PMC_PCER0_PID11;
 	// Enable pin
 	PIOA->PIO_PER |= IR_PIN;
 	while((PIOA->PIO_PSR & IR_PIN) == 0);
-	// Disable output
+	// Set as input
 	PIOA->PIO_ODR |= IR_PIN;
+	// Disable pull-up
+	PIOA->PIO_PUDR = IR_PIN;
+	// Enable PMC clock
+	PMC->PMC_PCER0 |= PMC_PCER0_PID11;
+	// Enable interrupt in NVIC
+	NVIC_EnableIRQ(PIOA_IRQn); 
+	// Make sure falling edge is used
+	PIOA->PIO_AIMER = IR_PIN;
+	// Edge detection interrupt enable
+	PIOA->PIO_ESR = IR_PIN;
+	// Falling edge
+	PIOA->PIO_FELLSR = IR_PIN;
+	
 	// Clock divider for debounce: t_div = 2*(div+1)*t_slow_clock (~31 microsec)
-	PIOA->PIO_SCDR = 0xFFF; // Clock divider for 0.5 s debounce
+	PIOA->PIO_SCDR = 0xFF; // Clock divider for 0.25 s debounce
 	// Enable input glitch and debounce filter
 	PIOA->PIO_DIFSR |= IR_PIN;
 	if ((REG_PIOA_IFDGSR & IR_PIN) == 0) {
@@ -60,27 +72,25 @@ void ir_setup(){
 	}
 	PIOA->PIO_IFER |= IR_PIN;
 	
-	
-	// Enable interrupt on pin
-	PIOA->PIO_IER |= IR_PIN;
-	PIOA->PIO_AIMER |= IR_PIN; // Make sure falling edge is used
-	PIOA->PIO_ESR |= IR_PIN; // Edge detection interrupt enable
 	if (PIOA->PIO_ELSR & IR_PIN) {
 		printf("Error: level interrupt selected for IR pin\n\r");
-	}
-	PIOA->PIO_FELLSR |= IR_PIN; // Falling edge
-	
-	//NVIC_EnableIRQ(PIOA_IRQn); // Enable interrupt in NVIC
+	} 
+	// Enable interrupt on pin
+	PIOA->PIO_IER = IR_PIN;
 }
 
-
-void PIOA_Handler(void){
-	//static volatile uint8_t state = 1;
-	//uint8_t new_state = (PIOA->PIO_PDSR & IR_PIN) >> 14;
-	//if (new_state == state) {
-	//	return;
-	//}
-	//state = new_state;
-	printf("IR test!!!\n\r");
-	NVIC_ClearPendingIRQ(PIOA_IRQn);
+void solonoid_setup()
+{
+	// Enable PMC clock
+	PMC->PMC_PCER0 |= PMC_PCER0_PID11;
+	// PORT enable IO
+	PIOA->PIO_PER |= SOLO_PIN;
+	// PORT pin set direction as output
+	PIOA->PIO_OER |= SOLO_PIN;
+	// PORT pin enable internal pullup
+	PIOA->PIO_PUDR &= ~(SOLO_PIN);
+	// Enable pin io to be written directly
+	PIOA->PIO_OWER = (SOLO_PIN);
+	//Set pin high
+	PIOA->PIO_ODSR |= SOLO_PIN;
 }
