@@ -12,6 +12,7 @@
 #include "sam.h"
 
 #define IR_PIN PIO_PA14
+#define SOLO_PIN PIO_PA15
 #include "pwm_lib.h"
 #include "systick_lib.h"
 
@@ -31,6 +32,8 @@ uint8_t currentServoPos;
 void JS_Handler(uint8_t direction);
 
 void ir_setup();
+
+void solonoid_setup();
 
 
 
