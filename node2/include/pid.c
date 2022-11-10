@@ -7,17 +7,17 @@
 
 #include "pid.h"
 
-void setup_pid(struct pid_t *pid){
+void pid_setup(struct pid_t *pid){
     // tune pid
 }
 
-void tune_pid(struct pid_t *pid, uint8_t K, uint8_t Ti, uint8_t Td, uint8_t N, uint8_t T){
+void pid_tune(struct pid_t *pid, uint8_t K, uint8_t Ti, uint8_t Td, uint8_t N){
     // calculate new controller values based on input and update the pid struct
-    pid->beta = Td/(Td + (T*N)); // beta = Td/(Td + TN)
+	pid->beta = Td/(Td + (PID_SAMPLING_INTERVAL_MS*N)); // beta = Td/(Td + TN)
     pid->Kp = K*GAIN_SCALING;
-    pid->Ki = K*(T/Ti)*GAIN_SCALING; // Ki = K*T/Ti
-    pid->Kd = K*(Td/T)*GAIN_SCALING;
-    pid->sampling_interval = T;
+    pid->Ki = K*(PID_SAMPLING_INTERVAL_MS/Ti)*GAIN_SCALING; // Ki = K*T/Ti
+    pid->Kd = K*(Td/PID_SAMPLING_INTERVAL_MS)*GAIN_SCALING;
+	pid->sampling_interval = PID_SAMPLING_INTERVAL_MS;
 }
 
 
@@ -25,7 +25,7 @@ int16_t pid_controller(struct pid_t *pid, uint8_t r, uint8_t y){
     /* Outputs a gain u in range [-100, 100] based on pid struct parameters, a setpoint and a position */
 
     // Calculate error
-    uint8_t e = r - y;
+    int16_t e = r - y;
     
     // Calculate controller gains
     int16_t u_p = pid->Kp * e;
