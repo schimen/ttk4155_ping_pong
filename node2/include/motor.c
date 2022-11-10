@@ -12,8 +12,14 @@ void motor_setup(){
 
 	// DAC setup
     PMC->PMC_PCER1 |= PMC_PCER1_PID38; // Enable DAC clock in PMC
+	// DACC in free running mode, half word mode, channel 1 selected, tag mode selected
+	DACC->DACC_MR |= (DACC_MR_TRGEN_DIS | DACC_MR_WORD_HALF | DACC_MR_USER_SEL_CHANNEL1 | DACC_MR_TAG_DIS);
     DACC->DACC_CHER |= DACC_CHER_CH1; // DAC1 enable
-
+	
+	if (~(DACC->DACC_CHSR & DACC_CHSR_CH1)){
+		printf("DAC channel 1 not enabled\n\r");
+	}
+	
 
     // MJ1 SETUP
     // Enable MJ1 pins
@@ -40,6 +46,11 @@ void motor_setup(){
 	
 	// Pull encoder output enable and reset pin high
 	PIOD->PIO_ODSR |= (MJ1_NOT_OE | MJ1_NOT_RST);
+	
+    // Enable motor
+    PIOD->PIO_ODSR |= MJ1_EN;
+	
+	encoder_calibrate();
 }
 
 
@@ -56,19 +67,37 @@ void set_motor_direction(uint8_t direction){
     }
 }
 
+void set_motor_speed(uint8_t speed){
+	uint32_t data = (speed*0xFFF)/100;
+	
+	if (data < MOTOR_TRESHOLD && data != 0){data = MOTOR_TRESHOLD;}
+	DACC->DACC_CDR = (data & 0xFFF);
+	//printf("setting motor speed: %d\n\r", (data & 0xFFF));
+}
+
 
 int16_t encoder_read(){
     PIOD->PIO_ODSR &= ~(MJ1_NOT_OE);										// 1: Set !OE low, to sample and hold the encoder value
     PIOD->PIO_ODSR &= ~(MJ1_SEL);											// 2: Set SEL low to output high byte
-    ms_delay(10);															// 3: Wait approx. 20 microseconds for output to settle
-    uint8_t encoder_high = (uint8_t) ((PIOC->PIO_PDSR & MJ2_PINS) >> 1);	// 4: Read MJ2 to get high byte
+    ms_delay(1);															// 3: Wait approx. 20 microseconds for output to settle
+	uint8_t encoder_high = (uint8_t) ((PIOC->PIO_PDSR & MJ2_PINS) >> 1);	// 4: Read MJ2 to get high byte
     PIOD->PIO_ODSR |= MJ1_SEL;												// 5: Set SEL high to output low byte
-    ms_delay(10);															// 6: Wait approx. 20 microseconds
+    ms_delay(1);															// 6: Wait approx. 20 microseconds
     uint8_t encoder_low = (uint8_t) ((PIOC->PIO_PDSR & MJ2_PINS) >> 1);		// 7: Read MJ2 to get low byte
     PIOD->PIO_ODSR |= MJ1_NOT_OE;											// 8: Set !OE to high
 
     int16_t encoder = (int16_t) ((encoder_high << 8) | (encoder_low));
+	
     return encoder;
+}
+
+uint8_t encoder_get_position(){
+	int16_t raw_data = encoder_read();
+	if (raw_data < 0){
+		raw_data = 0;
+	}
+	uint16_t position = (raw_data*100/ENCODER_MAX);
+	return (uint8_t) position;
 }
 
 void encoder_reset(){
@@ -78,14 +107,17 @@ void encoder_reset(){
 }
 
 void encoder_calibrate(){
-	int16_t current_pos = encoder_read();
+	uint8_t current_pos = encoder_get_position();
 	set_motor_direction(MOTOR_RIGHT);
-	// TODO: set_motor_speed();
-	// Keep driving as long as the position changes
-	while (~(current_pos == encoder_read())){
+	set_motor_speed(80);
+	ms_delay(100);
+	//Keep driving as long as the position changes
+	while (~(current_pos == encoder_get_position())){
+		printf("calibrating..\n\r");
 		current_pos = encoder_read();
-		ms_delay(20);
+		ms_delay(100);
 	}
-	// set_motor_speed(0);
+	set_motor_speed(0);
 	encoder_reset();
+	printf("calibration done..\n\r");
 }

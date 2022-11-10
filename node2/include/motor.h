@@ -11,6 +11,7 @@
 
 #include "sam.h"
 #include <stdio.h>
+#include "systick_lib.h"
 
 
 // MJ1 pins
@@ -25,6 +26,7 @@
 #define MJ2_PINS 0x01FE
 
 #define ENCODER_MAX 8100
+#define MOTOR_TRESHOLD 25
 
 enum motor_direction {MOTOR_RIGHT, MOTOR_LEFT};
 
@@ -32,7 +34,11 @@ void motor_setup();
 
 void set_motor_direction(uint8_t direction);
 
+void set_motor_speed(uint8_t speed);
+
 int16_t encoder_read();
+
+uint8_t encoder_get_position();
 
 void encoder_reset();
 
