@@ -13,6 +13,7 @@
 #include "console_lib.h"
 #include "pwm_lib.h"
 #include "systick_lib.h"
+#include "motor.h"
 
 #define DEBUG_INTERRUPT 0
 #define LED0_PIN PIO_PA19 
@@ -26,23 +27,30 @@ void LED_setup(void);
 int main(void)
 {
     /* Initialize the SAM system */
+	
     SystemInit();
 	WDT->WDT_MR = WDT_MR_WDDIS; //Disable watchdogtimer
 	configure_uart();
+	printf("starting setup\n\r");
 	can_setup();
 	LED_setup();
 	pwm_setup();
 	ir_setup();
+	motor_setup();
 	SysTick_Config(10500); //1ms in between ticks
-	printf("Node 2 setup done\r");
+	printf("Node 2 setup done\n\r");
 	prevMillis = getMillis();
+	uint16_t encoder;
 	
     while (1) 
     {	
-		if (getMillis() >= prevMillis + 20)
+		if (getMillis() >= prevMillis + 500)
 		{
 			JS_Handler(console_data.dir_joystick);
+			encoder = encoder_read();
+			printf("encoder pos: %d \n\r", encoder);
 			prevMillis = getMillis();
+			
 		}
     }
 }

@@ -11,7 +11,6 @@
 
 #include "sam.h"
 #include <stdio.h>
-//#include "util/delay.h"
 
 
 // MJ1 pins
@@ -24,9 +23,10 @@
 // MJ2
 #define MJ2_PINS (0x00FF << 1)      // PC1-PC8
 
-enum motor_direction {RIGHT, LEFT};
+enum motor_direction {MOTOR_RIGHT, MOTOR_LEFT};
 
 void motor_setup();
 void set_motor_direction(uint8_t direction);
+uint16_t encoder_read();
 
 #endif /* MOTOR_H_ */

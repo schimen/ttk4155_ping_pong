@@ -34,17 +34,19 @@ void motor_setup(){
     PIOC->PIO_ODR |= MJ2_PINS;
     // Disable internal pull up
     PIOC->PIO_PUDR |= MJ2_PINS;
+	
+	//PIOD->PIO_ODSR |= (MJ1_NOT_OE | MJ1_NOT_RST);
 }
 
 
 void set_motor_direction(uint8_t direction){
     switch (direction)
     {
-        case RIGHT:
+        case MOTOR_RIGHT:
             PIOD->PIO_ODSR |= MJ1_DIR;
             break;
         
-        case LEFT:
+        case MOTOR_LEFT:
             PIOD->PIO_ODSR &= ~(MJ1_DIR);
             break;
     }
@@ -54,10 +56,11 @@ void set_motor_direction(uint8_t direction){
 uint16_t encoder_read(){
     PIOD->PIO_ODSR &= ~(MJ1_NOT_OE);                    // 1: Set !OE low, to sample and hold the encoder value
     PIOD->PIO_ODSR &= ~(MJ1_SEL);                       // 2: Set SEL low to output high byte
-    //_delay_us(20);                                      // 3: Wait approx. 20 microseconds for output to settle
+    ms_delay(100);                                      // 3: Wait approx. 20 microseconds for output to settle
     uint8_t encoder_high = (PIOC->PIO_PDSR & MJ2_PINS); // 4: Read MJ2 to get high byte
+	printf("high: %d \n\r", encoder_high);
     PIOD->PIO_ODSR |= MJ1_SEL;                          // 5: Set SEL high to output low byte
-    //_delay_us(20);                                      // 6: Wait approx. 20 microseconds
+    ms_delay(100);                                     // 6: Wait approx. 20 microseconds
     uint8_t encoder_low = (PIOC->PIO_PDSR & MJ2_PINS);  // 7: Read MJ2 to get low byte
     PIOD->PIO_ODSR |= MJ1_NOT_OE;                       // 8: Set !OE to high
 
