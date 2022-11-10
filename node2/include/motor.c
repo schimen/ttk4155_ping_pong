@@ -109,15 +109,15 @@ void encoder_reset(){
 void encoder_calibrate(){
 	uint8_t current_pos = encoder_get_position();
 	set_motor_direction(MOTOR_RIGHT);
-	set_motor_speed(80);
-	ms_delay(100);
+	set_motor_speed(60);
+	ms_delay(10000);
 	//Keep driving as long as the position changes
-	while (~(current_pos == encoder_get_position())){
-		printf("calibrating..\n\r");
-		current_pos = encoder_read();
-		ms_delay(100);
-	}
+// 	while (~(current_pos == encoder_get_position())){
+// 		printf("calibrating..\n\r");
+// 		current_pos = encoder_get_position();
+// 		ms_delay(100);
+// 	}
 	set_motor_speed(0);
 	encoder_reset();
-	printf("calibration done..\n\r");
+	printf("calibration done..%d \n\r", encoder_get_position());
 }

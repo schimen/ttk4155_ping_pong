@@ -10,11 +10,12 @@
 #define CONSOLE_LIB_H_
 #include <stdio.h>
 #include "sam.h"
+#include "pwm_lib.h"
+#include "systick_lib.h"
 
 #define IR_PIN PIO_PA14
 #define SOLO_PIN PIO_PA15
-#include "pwm_lib.h"
-#include "systick_lib.h"
+#define SOLO_DELAY_MS 300
 
 enum JS_direction {DEFAULT, RIGHT, LEFT, UP, DOWN};
 	

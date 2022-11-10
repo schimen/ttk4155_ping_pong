@@ -33,7 +33,7 @@ void JS_Handler(uint8_t direction)
 		break;
 		case UP:
 		PIOA->PIO_CODR = SOLO_PIN; //BOUNCE!
-		ms_delay(200);
+		ms_delay(SOLO_DELAY_MS);
 		PIOA->PIO_SODR = SOLO_PIN;
 		break;
 		case DOWN:
