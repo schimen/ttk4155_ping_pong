@@ -68,7 +68,7 @@ void ir_setup(){
 	}
 	PIOA->PIO_FELLSR |= IR_PIN; // Falling edge
 	
-	//NVIC_EnableIRQ(PIOA_IRQn); // Enable interrupt in NVIC
+	NVIC_EnableIRQ(PIOA_IRQn); // Enable interrupt in NVIC
 }
 
 

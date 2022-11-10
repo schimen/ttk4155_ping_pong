@@ -40,13 +40,12 @@ int main(void)
 	SysTick_Config(10500); //1ms in between ticks
 	printf("Node 2 setup done\n\r");
 	prevMillis = getMillis();
-	uint16_t encoder;
 	
     while (1) 
     {	
-		if (getMillis() >= prevMillis + 500)
+		if (getMillis() >= prevMillis + 2000)
 		{
-			JS_Handler(console_data.dir_joystick);
+			//JS_Handler(console_data.dir_joystick);
 			encoder = encoder_read();
 			printf("encoder pos: %d \n\r", encoder);
 			prevMillis = getMillis();

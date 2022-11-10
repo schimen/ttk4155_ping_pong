@@ -21,12 +21,23 @@
 #define MJ1_DIR         PIO_PD10    // pin 32
 
 // MJ2
-#define MJ2_PINS (0x00FF << 1)      // PC1-PC8
+//#define MJ2_PINS (0x00FF << 1)      // PC1-PC8
+#define MJ2_PINS 0x01FE
+
+#define ENCODER_MAX 8100
 
 enum motor_direction {MOTOR_RIGHT, MOTOR_LEFT};
 
 void motor_setup();
+
 void set_motor_direction(uint8_t direction);
-uint16_t encoder_read();
+
+int16_t encoder_read();
+
+void encoder_reset();
+
+void encoder_calibrate();
+
+
 
 #endif /* MOTOR_H_ */
