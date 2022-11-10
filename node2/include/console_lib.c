@@ -49,18 +49,36 @@ void ir_setup(){
 	while((PIOA->PIO_PSR & IR_PIN) == 0);
 	// Disable output
 	PIOA->PIO_ODR |= IR_PIN;
+	// Clock divider for debounce: t_div = 2*(div+1)*t_slow_clock (~31 microsec)
+	PIOA->PIO_SCDR = 0xFFF; // Clock divider for 0.5 s debounce
 	// Enable input glitch and debounce filter
-	PIOA->PIO_IFER |= IR_PIN;
 	PIOA->PIO_DIFSR |= IR_PIN;
+	if ((REG_PIOA_IFDGSR & IR_PIN) == 0) {
+		printf("Could not set debounce filter on IR pin\n\r");
+	}
+	PIOA->PIO_IFER |= IR_PIN;
+	
+	
 	// Enable interrupt on pin
 	PIOA->PIO_IER |= IR_PIN;
+	PIOA->PIO_AIMER |= IR_PIN; // Make sure falling edge is used
 	PIOA->PIO_ESR |= IR_PIN; // Edge detection interrupt enable
+	if (PIOA->PIO_ELSR & IR_PIN) {
+		printf("Error: level interrupt selected for IR pin\n\r");
+	}
 	PIOA->PIO_FELLSR |= IR_PIN; // Falling edge
 	
-	NVIC_EnableIRQ(PIOA_IRQn); // Enable interrupt in NVIC
+	//NVIC_EnableIRQ(PIOA_IRQn); // Enable interrupt in NVIC
 }
 
 
 void PIOA_Handler(void){
+	//static volatile uint8_t state = 1;
+	//uint8_t new_state = (PIOA->PIO_PDSR & IR_PIN) >> 14;
+	//if (new_state == state) {
+	//	return;
+	//}
+	//state = new_state;
 	printf("IR test!!!\n\r");
+	NVIC_ClearPendingIRQ(PIOA_IRQn);
 }
