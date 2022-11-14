@@ -17,6 +17,11 @@
 volatile bool left_btn_pressed = false;
 volatile bool right_btn_pressed = false;
 
+static bool game_on = false;
+
+void start_game();
+void handle_can_msg(struct can_frame *msg);
+
 /* External interrupts for buttons*/
 ISR (INT0_vect) //LEFT USB-button
 {
@@ -31,24 +36,12 @@ ISR (INT1_vect) //RIGHT USB-button
 ISR (INT2_vect)
 {
 	uint8_t flag = 0b00000011 & mcp_read_byte(MCP_CANINTF); //Holds current interrupt flag
-	
-	//printf("MCP Interrupt on flag: %02x \r\n", flag);
 	// Do stuff based on flag
 	
 	if (flag == MCP_RX0IF || flag == MCP_RX1IF) // Message received on RXB0 or RXB1
 	{
 		struct can_frame can_rx_msg;
-		while (can_receive(&can_rx_msg))
-		{
-			printf("CAN message received on buffer %02x \r\n", flag-1);
-			//printf("message received (%d length): ", can_rx_msg.len);
-			// 				for (uint8_t i = 0; i < can_rx_msg.len; i++) {
-			// 					printf("%d, ", can_rx_msg.data[i]);
-			// 				}
-			// 				printf(" from id %d\n", can_rx_msg.id);
-			// 				printf("\n");
-				
-		}
+		while (can_receive(&can_rx_msg)) { handle_can_msg(&can_rx_msg); };
 	}
 	// Clear current interrupt flag
 	mcp_bit_modify(MCP_CANINTF,(0xFF & flag), ~(flag));
@@ -57,36 +50,51 @@ ISR (INT2_vect)
 struct menu_page main_page = {
     .title = "Menu",
     .options = {
+		{ .name = "Start game", .callback = &start_game },
         { .name = "SRAM test", .callback = &sram_test },
         { .name = "CAN test", .callback = &can_test },
     }
 };
+
+void start_game() {
+	game_on = true;
+	struct can_frame msg;
+	msg.id = 2;
+	msg.len = 2;
+	msg.data[0] = 1;
+	msg.data[1] = 0;
+	can_write(&msg);
+	game_menu(0);
+}
+
+void stop_game() {
+	struct can_frame msg;
+	msg.id = 2;
+	msg.len = 2;
+	msg.data[0] = 0;
+	msg.data[1] = 0;
+	can_write(&msg);
+	game_over(0);
+	game_on = false;
+	change_menu(&main_page);
+}
 
 void start_menu() {
     change_menu(&main_page);
 }
 
 void menu_service(uint8_t direction, bool run_option_bool){
-	
+	if (game_on) {
+		return;
+	}
 	switch (direction)
 	{
-		case DEFAULT:
-			//printf("DEFAULT\r\n");
-			break;
-		case RIGHT:
-			//printf("RIGHT\r\n");
-			break;
-		case LEFT:
-			//printf("LEFT\r\n");
-			break;
 		case UP:
-			//printf("UP\r\n");
 			select_up();
 			print_menu();
 			_delay_ms(100);
 			break;
 		case DOWN:
-			//printf("DOWN\r\n");
 			select_down();
 			print_menu();
 			_delay_ms(100);
@@ -97,6 +105,21 @@ void menu_service(uint8_t direction, bool run_option_bool){
 	}
 }
 
+void handle_can_msg(struct can_frame *msg) {
+	// Game message
+	if (msg->id == 2) {
+		if (msg->data[0] == 0) {
+			game_over(msg->data[1]);
+			game_on = false;
+			change_menu(&main_page);
+		}
+		// Game is on, update score
+		else {
+			game_menu(msg->data[1]);
+		}
+	}
+}
+				
 int main(void)
 {
 	uart_setup();
@@ -120,17 +143,26 @@ int main(void)
    		js_slider_update();
 		// Act on new input at new event
 		if (new_event(left_btn_pressed, right_btn_pressed)) {
-			// React to event in menu
-			menu_service(joystick_direction(), left_btn_pressed);
-			// Send event data to node 2
-			write_event_data(
-				event_msg.data, left_btn_pressed, right_btn_pressed
-			);
+			// Send event data to node 2 when game is on
+			if (game_on) {
+				write_event_data(
+					event_msg.data, left_btn_pressed, right_btn_pressed
+				);
+				can_write(&event_msg);
+				
+				if (left_btn_pressed) {
+					stop_game();
+				}
+
+			}
+			// React to event in menu when game is not on
+			else {
+				menu_service(joystick_direction(), left_btn_pressed);
+			}
 			left_btn_pressed = false;
 			right_btn_pressed = false;
-			can_write(&event_msg);
 		}
-		_delay_ms(100);
+		_delay_ms(50);
 	}
 }
 
