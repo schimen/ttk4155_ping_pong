@@ -16,24 +16,24 @@
 #include "motor.h"
 
 
-#define MAX_U           12800   // 100% * GAIN_SCALING
+#define MAX_U           25600   // 100% * GAIN_SCALING
 #define MAX_UI          10000    // 
-#define GAIN_SCALING    128
+#define GAIN_SCALING    256
 
-#define PID_SAMPLING_INTERVAL_MS 10
+#define PID_SAMPLING_INTERVAL_MS 1
 
 typedef struct pid_t
 {
-    uint8_t Kp;     // P-gain, Kp = K
-    uint8_t Ki;     // I-gain, Ki = K*(T/Ti)
-    uint8_t Kd;     // D-gain, Kd = K*(Td/T)
-    uint8_t Ti;     // Integral term time constant
-    uint8_t Td;     // Derivative term time constant
+    uint16_t Kp;     // P-gain, Kp = K
+    uint16_t Ki;     // I-gain, Ki = K*(T/Ti)
+    uint16_t Kd;     // D-gain, Kd = K*(Td/T)
+    uint16_t Ti;     // Integral term time constant
+    uint16_t Td;     // Derivative term time constant
 
     uint8_t sampling_interval;
     uint8_t beta;
 	
-	uint8_t u; // Controller output
+	uint32_t u; // Controller output
 	
     int16_t prev_u_i;
     int16_t prev_u_d; 
@@ -44,7 +44,7 @@ typedef struct pid_t
 
 void pid_setup(struct pid_t *pid);
 
-void pid_tune(struct pid_t *pid, uint8_t K, uint8_t Ti, uint8_t Td, uint8_t N);
+void pid_tune(struct pid_t *pid, float K, uint8_t Ti, uint8_t Td, uint8_t N);
 
 int16_t pid_controller(struct pid_t *pid, uint8_t r, uint8_t y);
 
