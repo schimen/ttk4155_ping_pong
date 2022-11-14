@@ -96,19 +96,19 @@ void can_test()
 		.len=7
 	};
 	
-	for (uint8_t i = 0; i < 255; i++) {
-		//printf("Test %d:\n", i);
+	for (uint8_t i = 0; i < 32; i++) {
+		printf("Test %d:\n", i);
 		can_tx_msg.id = i;
 		for (uint8_t j = 0; j < can_tx_msg.len; j++) {
 			can_tx_msg.data[j] = i+j;
 		}
 		
-		//printf("Sending message (%d length): ", can_tx_msg.len);
+		printf("Sending message (%d length): ", can_tx_msg.len);
 		
 		for (uint8_t i = 0; i < can_tx_msg.len; i++) {
-			//printf("%d, ", can_tx_msg.data[i]);
+			printf("%d, ", can_tx_msg.data[i]);
 		}
-		//printf(" from id %d\n", can_tx_msg.id);
+		printf(" from id %d\n", can_tx_msg.id);
 		can_write(&can_tx_msg);
 		
 		_delay_ms(100);
