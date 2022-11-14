@@ -25,8 +25,9 @@
 //#define MJ2_PINS (0x00FF << 1)      // PC1-PC8
 #define MJ2_PINS 0x01FE
 
-#define ENCODER_MAX 8100
-#define MOTOR_TRESHOLD 40
+#define MOTOR_TRESHOLD 10
+
+uint16_t encoder_max;
 
 enum motor_direction {MOTOR_RIGHT, MOTOR_LEFT};
 
