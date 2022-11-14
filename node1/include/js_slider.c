@@ -81,7 +81,6 @@ uint8_t get_JS_direction(void) {
   /*Converts adc-value to position in percent*/
   joystick.x_pos = JS_adc_to_percent(joystick.x_adc, joystick.x_default);
   joystick.y_pos = JS_adc_to_percent(joystick.y_adc, joystick.y_default);
-  // printf("Joystick X:%d Y:%d \r\n", joystick.x_pos, joystick.y_pos);
 
   /* Returns which direction the joystick is pointing */
   return JS_percent_to_direction(joystick.x_pos, joystick.y_pos);
@@ -104,7 +103,7 @@ void js_slider_update(void) {
   slider.right_adc = adc[0];
 
   slider.left_pos = get_slider_position(slider.left_adc);
-  slider.right_pos = get_slider_position(slider.right_pos);
+  slider.right_pos = get_slider_position(slider.right_adc);
   joystick.direction = get_JS_direction();
 }
 
