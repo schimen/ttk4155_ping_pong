@@ -96,7 +96,7 @@ uint8_t encoder_get_position(){
 	if (raw_data < 0){
 		raw_data = 0;
 	}
-	uint16_t position = (raw_data*100/ENCODER_MAX);
+	uint16_t position = (raw_data*100/encoder_max);
 	return (uint8_t) position;
 }
 
@@ -117,7 +117,14 @@ void encoder_calibrate(){
 // 		current_pos = encoder_get_position();
 // 		ms_delay(100);
 // 	}
-	set_motor_speed(0);
+	
 	encoder_reset();
+	set_motor_speed(0);
 	printf("calibration done..%d \n\r", encoder_get_position());
+	set_motor_direction(MOTOR_LEFT);
+	set_motor_speed(60);
+	ms_delay(10000);
+	encoder_max = encoder_read();
+	printf("encoder max: %d \n\r", encoder_max);
+	
 }
