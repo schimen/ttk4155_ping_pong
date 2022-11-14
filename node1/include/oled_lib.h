@@ -34,6 +34,8 @@ int oled_recv_character(FILE *file);
 
 void oled_print(char *text);
 
+void oled_print_number(uint8_t number);
+
 /* OLED command defines */
 #define CMD_SEGMENT_REMAP_0              0xA0 
 #define CMD_SEGMENT_REMAP_127            0xA1 
