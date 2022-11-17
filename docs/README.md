@@ -1,6 +1,9 @@
 # Docs
 
 This folder contains documentation for the lag in TTK4155.
+For quickly reading the documentation, a [generated pdf-file]((./byggern.pdf)) can be read.
+
+For building html and pdf documentation, see below.
 
 ## Build documentation
 
