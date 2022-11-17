@@ -1,11 +1,12 @@
 #ifndef SRAM_LIB_H_
 #define SRAM_LIB_H_
 
-#define EXRAM_START 0x1800
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <avr/io.h>
+
+
+#define EXRAM_START 0x1800
 
 void sram_setup();
 

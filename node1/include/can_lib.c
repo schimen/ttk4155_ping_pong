@@ -1,5 +1,6 @@
 #include "can_lib.h"
 
+
 void can_setup() {
 	// set the mcp in config mode
 	mcp_write_byte(MCP_CANCTRL, MODE_CONFIG);
@@ -35,12 +36,7 @@ void can_write(struct can_frame *can_msg) {
 	mcp_request_to_send();
 }
 
-/**
- * @brief Get the number of new received messages
- * 
- * @param status_byte Byte representing rx status from can driver.
- * @return uint8_t Number of new messages ready to be received.
- */
+
 uint8_t get_n_new_messages(uint8_t status_byte) {
 	// Get the two top bits (corresponding to buffer numbers in status byte)
 	uint8_t buffer_number = (status_byte >> 6) & 0x03;
@@ -56,13 +52,7 @@ uint8_t get_n_new_messages(uint8_t status_byte) {
 	}
 }
 
-/**
- * @brief Receive can message
- * 
- * @param can_msg Pointer to can_frame struct where the new message will be 
- *   stored.
- * @return uint8_t Number of messages received
- */
+
 uint8_t can_receive(struct can_frame *can_msg)
 {	
 	uint8_t rx_status = mcp_read_rx_status();
@@ -87,6 +77,7 @@ uint8_t can_receive(struct can_frame *can_msg)
 		return 1;
 	}
 }
+
 
 void can_test()
 {

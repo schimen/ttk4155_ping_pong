@@ -11,38 +11,34 @@ void JS_Handler(uint8_t direction)
 	switch (direction)
 	{
 		case DEFAULT:
-		//printf("DEFAULT\n\r");
-		currentServoPos = 90;
-		servo_set_pos(currentServoPos,6);
-		break;
+			currentServoPos = 90;
+			servo_set_pos(currentServoPos,6);
+			break;
 		case RIGHT:
-		if (currentServoPos > 0)
-		{
-			currentServoPos--;
-			servo_set_pos(currentServoPos, 6);
-		}
-		break;
+			if (currentServoPos > 0)
+			{
+				currentServoPos--;
+				servo_set_pos(currentServoPos, 6);
+			}
+			break;
 		case LEFT:
-		if (currentServoPos < 180)
-		{
-			currentServoPos++;
-			servo_set_pos(currentServoPos, 6);
-			
-		}
-		break;
+			if (currentServoPos < 180)
+			{
+				currentServoPos++;
+				servo_set_pos(currentServoPos, 6);
+			}
+			break;
 		case UP:
-		PIOA->PIO_CODR = SOLO_PIN; //BOUNCE!
-		ms_delay(SOLO_DELAY_MS);
-		PIOA->PIO_SODR = SOLO_PIN;
-		break;
+			PIOA->PIO_CODR = SOLO_PIN; //BOUNCE!
+			ms_delay(SOLO_DELAY_MS);
+			PIOA->PIO_SODR = SOLO_PIN;
+			break;
 		case DOWN:
-		printf("DOWN\n\r");
-		break;
+			break;
 	}
 }
-/*
-* Setup of the infrared sensor
-*/
+
+
 void ir_setup(){
 	// Enable pin
 	PIOA->PIO_PER |= IR_PIN;
@@ -77,6 +73,7 @@ void ir_setup(){
 	// Enable interrupt on pin
 	PIOA->PIO_IER = IR_PIN;
 }
+
 
 void solonoid_setup()
 {

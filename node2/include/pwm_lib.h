@@ -1,13 +1,12 @@
-/*
- * pwm.h
- *
- * Created: 27.10.2022 15:13:02
- *  Author: joerg
- */ 
-
-
 #ifndef PWM_H_
 #define PWM_H_
+
+/** 
+ * @brief PWM library API for node 2
+ * @defgroup pwm
+ * @ingroup pwm
+ * @{
+*/
 
 #include "sam.h"
 #include <stdio.h>
@@ -36,5 +35,7 @@ void pwm_set_duty_cycle(uint8_t duty_cycle, uint8_t channel);
  * @param channel PWM channel
  */
 void servo_set_pos(uint8_t pos, uint8_t channel);
+
+/** @}*/
 
 #endif /* PWM_H_ */
