@@ -16,3 +16,6 @@ Modules
    :caption: Modules
 
    motor.rst
+   pid.rst
+   console.rst
+   pwm.rst

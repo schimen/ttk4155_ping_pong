@@ -9,14 +9,15 @@
  * @brief Motor control API for node 2
  * @defgroup motor
  * @ingroup motor
- * 
+ * @{
 */
 
 /**
  * @brief Definition of header pins used to interface with the MJ1 connector on
  * the motor box
  * @defgroup motor_MJ1
- * @ingroup motor
+ * @addtogroup motor
+ * @{
  */
 
 /** !OE pin. Encoder output enable */

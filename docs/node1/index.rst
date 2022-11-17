@@ -16,4 +16,8 @@ Modules
    :maxdepth: 1
    :caption: Modules
    
+   uart_node1.rst
    can.rst
+   oled.rst
+   js_slider.rst
+   sram.rst

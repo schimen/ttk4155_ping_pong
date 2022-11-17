@@ -33,12 +33,10 @@ volatile uint16_t score = 0;
 volatile bool gameRunning = false;
 volatile bool gameOver = false;
 
-enum SCORE_STATE{ CURRENT_SCORE, FINAL_SCORE}; 
+enum SCORE_STATE{CURRENT_SCORE, FINAL_SCORE}; 
 
 void LED_setup(void);
-
 void pid_handler(uint8_t setpoint);
-
 void update_score(uint8_t SCORE_STATE);
 
 int main(void)
@@ -62,7 +60,8 @@ int main(void)
 	//encoder_reset();
 	
     while (1) 
-    {		
+    {	
+		// Wait for user to press "Start game	
 		if (game_data.start == 1 && gameRunning == false)
 		{
 			printf("START GAME\n\r");
@@ -72,6 +71,7 @@ int main(void)
 			startTime = getMillis();
 			updateMillis = getMillis();
 		}
+		//Run game
 		while(gameRunning)
 		{
 			if (getMillis() >= prevMillis + PID_SAMPLING_INTERVAL_MS)
@@ -80,6 +80,7 @@ int main(void)
 				pid_handler(console_data.r_slider);
 				prevMillis = getMillis();
 			}
+			//Game ends if ping-pong ball touches lower wall or user presses "Exit"
 			if (gameOver || game_data.stop)
 			{
 				gameOver = false;
@@ -90,9 +91,10 @@ int main(void)
 				gameRunning = false;
 				update_score(FINAL_SCORE);
  			}
+			//Send current score to OLED screen on node 1
 			else if (getMillis() >= updateMillis + 5000)
 			{
-				score =  (getMillis() - startTime) / 10000;
+				score = (getMillis() - startTime) / 10000;
 				update_score(CURRENT_SCORE);
 				updateMillis = getMillis();
 			}
@@ -102,11 +104,8 @@ int main(void)
 
 
 /**
- * \brief CAN0 Interrupt handler for RX, TX and bus error interrupts
- *
- * \param void
- *
- * \retval 
+ * @brief CAN0 Interrupt handler for RX, TX and bus error interrupts
+ * 
  */
 void CAN0_Handler()
 {
@@ -132,8 +131,7 @@ void CAN0_Handler()
 			rx_message.data_length = 0;
 		}
 		
-		/* Handle incoming message */
-		
+		// Handle incoming message
 		if (rx_message.data_length != 0 && rx_message.id == 1)
 		{
 			//byte 1: bit 0-2 joystick val, bit 3+4 er knapp R+L
@@ -164,10 +162,13 @@ void CAN0_Handler()
 		if(DEBUG_INTERRUPT)printf("CAN0 timer overflow\n\r");
 	}
 	
-	NVIC_ClearPendingIRQ(ID_CAN0);
-	
+	NVIC_ClearPendingIRQ(ID_CAN0);	
 }
 
+/**
+ * @brief IR-diode Interrupt handler
+ * 
+ */
 void PIOA_Handler(void) // IR-interrupt
 {
 	if (((PIOA->PIO_ISR & IR_PIN) == IR_PIN) && gameRunning == true)
@@ -176,6 +177,10 @@ void PIOA_Handler(void) // IR-interrupt
 	}
 }
 
+/**
+ * @brief Setup function for on-board LEDS
+ * 
+ */
 void LED_setup(void)
 {
 		// PORT enable IO
@@ -216,6 +221,11 @@ void pid_handler(uint8_t setpoint){
 	
 }
 
+/**
+ * @brief Sends the current and final score to Node 1. Resets score if the game has ended.
+ * 
+ * @param SCORE_STATE enum holding CURRENT_SCORE and FINAL_SCORE, depending on game state
+ */
 void update_score(uint8_t SCORE_STATE)
 {
 	if(CAN0->CAN_SR & CAN_SR_MB0) //CAN0 MB0 ready to send 
