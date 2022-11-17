@@ -28,6 +28,7 @@ GAME_DATA game_data;
 PID_DATA pid_data;
 
 uint32_t prevMillis = 0;
+uint32_t updateMillis = 0;
 uint32_t startTime = 0;
 uint16_t score = 0;
 
@@ -66,7 +67,10 @@ int main(void)
 			printf("START GAME\n\r");
 			gameRunning = true;
 			score = 0;
+			game_data.start = 0;
 			startTime = getMillis();
+			updateMillis = getMillis();
+			
 		}
 		
 		while(gameRunning)
@@ -79,11 +83,17 @@ int main(void)
 			}
 			if (gameOver || game_data.stop == 1)
 			{
+				printf("GAME OVER\n\r");
 				score =  (getMillis() - startTime) / 10000;
-				printf("Your score: %d \n\r", score);
 				gameOver = false;
 				game_data.stop = 0;
+				gameRunning = false;
 				updateScore = true;
+			}else if (getMillis() >= updateMillis + 5000)
+			{
+				score =  (getMillis() - startTime) / 10000;
+				updateScore = true;
+				updateMillis = getMillis();
 			}
 		}
     } //end while(1)
@@ -146,9 +156,9 @@ void CAN0_Handler()
 		//if(DEBUG_INTERRUPT) printf("CAN0 MB0 ready to send \n\r");
 		//Disable interrupt
 		CAN0->CAN_IDR = CAN_IER_MB0;
-		if (updateScore && gameRunning == true)
+		if (updateScore && gameRunning == false)
 		{
-			printf("Sending score\n\r");
+			printf("Final score: %d\n\r",score);
 			CAN_MESSAGE tx_message;
 			
 			tx_message.id = 2;
@@ -157,10 +167,22 @@ void CAN0_Handler()
 			tx_message.data[1] = 1; //Stop game
 			tx_message.data[2] = score;
 			can_send(&tx_message,0);
-			gameOver = false;
-			gameRunning = false;
+			
+			score = 0;
 			updateScore = false;
-			game_data.start = 0;
+			
+		} else if (updateScore && gameRunning == true)
+		{
+			printf("Current score: %d\n\r",score);
+			CAN_MESSAGE tx_message;
+			
+			tx_message.id = 2;
+			tx_message.data_length = 3;
+			tx_message.data[0] = 0; //start game
+			tx_message.data[1] = 0; //Stop game
+			tx_message.data[2] = score;
+			can_send(&tx_message,0);
+			updateScore = false;
 		}
 	}
 
@@ -182,7 +204,6 @@ void PIOA_Handler(void) // IR-interrupt
 {
 	if (((PIOA->PIO_ISR & IR_PIN) == IR_PIN) && gameRunning == true)
 	{
-			printf("GAME OVER\n\r");
 			gameOver = true;
 	}
 }
