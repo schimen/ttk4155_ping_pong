@@ -30,7 +30,7 @@ void can_write(struct can_frame *can_msg) {
 	buffer[1] = (uint8_t) (0xE0 & (can_msg->id << 5));
 	buffer[4] = (can_msg->len & 0x0F);
 	memcpy(&buffer[5], can_msg->data, can_msg->len);
-
+	_delay_us(700);
 	mcp_load_txbuffer(TXBUF0_START_ID, buffer, sizeof(buffer));
 	mcp_request_to_send();
 }

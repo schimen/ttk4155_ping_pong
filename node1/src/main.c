@@ -77,6 +77,7 @@ void stop_game() {
 	msg.len = 3;
 	msg.data[0] = 0;
 	msg.data[1] = 1;
+	msg.data[2] = 0;
 	can_write(&msg);
 	game_over(0);
 	game_on = false;
@@ -118,7 +119,7 @@ void handle_can_msg(struct can_frame *msg) {
 			change_menu(&main_page);
 		}
 		// Game is on, update score
-		else if (msg->data[0]) {
+		else {
 			game_menu(msg->data[2]);
 		}
 	}

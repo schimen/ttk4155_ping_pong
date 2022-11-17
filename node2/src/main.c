@@ -21,8 +21,6 @@
 #define LED0_PIN PIO_PA19 
 #define LED1_PIN PIO_PA20
 
-
-
 CONSOLE_DATA console_data;
 GAME_DATA game_data;
 PID_DATA pid_data;
@@ -30,15 +28,18 @@ PID_DATA pid_data;
 uint32_t prevMillis = 0;
 uint32_t updateMillis = 0;
 uint32_t startTime = 0;
-uint16_t score = 0;
+volatile uint16_t score = 0;
 
 volatile bool gameRunning = false;
 volatile bool gameOver = false;
-volatile bool updateScore = false;
+
+enum SCORE_STATE{ CURRENT_SCORE, FINAL_SCORE}; 
 
 void LED_setup(void);
 
 void pid_handler(uint8_t setpoint);
+
+void update_score(uint8_t SCORE_STATE);
 
 int main(void)
 {
@@ -66,13 +67,11 @@ int main(void)
 		{
 			printf("START GAME\n\r");
 			gameRunning = true;
-			score = 0;
 			game_data.start = 0;
+			score = 0;
 			startTime = getMillis();
 			updateMillis = getMillis();
-			
 		}
-		
 		while(gameRunning)
 		{
 			if (getMillis() >= prevMillis + PID_SAMPLING_INTERVAL_MS)
@@ -81,18 +80,20 @@ int main(void)
 				pid_handler(console_data.r_slider);
 				prevMillis = getMillis();
 			}
-			if (gameOver || game_data.stop == 1)
+			if (gameOver || game_data.stop)
 			{
-				printf("GAME OVER\n\r");
-				score =  (getMillis() - startTime) / 10000;
 				gameOver = false;
 				game_data.stop = 0;
+				
+				printf("GAME OVER\n\r");
+				score =  (getMillis() - startTime) / 10000;
 				gameRunning = false;
-				updateScore = true;
-			}else if (getMillis() >= updateMillis + 5000)
+				update_score(FINAL_SCORE);
+ 			}
+			else if (getMillis() >= updateMillis + 5000)
 			{
 				score =  (getMillis() - startTime) / 10000;
-				updateScore = true;
+				update_score(CURRENT_SCORE);
 				updateMillis = getMillis();
 			}
 		}
@@ -148,41 +149,8 @@ void CAN0_Handler()
 		{
 			game_data.start = rx_message.data[0];
 			game_data.stop = rx_message.data[1];
-		}
-	}
-	
-	if(can_sr & CAN_SR_MB0)
-	{
-		//if(DEBUG_INTERRUPT) printf("CAN0 MB0 ready to send \n\r");
-		//Disable interrupt
-		CAN0->CAN_IDR = CAN_IER_MB0;
-		if (updateScore && gameRunning == false)
-		{
-			printf("Final score: %d\n\r",score);
-			CAN_MESSAGE tx_message;
-			
-			tx_message.id = 2;
-			tx_message.data_length = 3;
-			tx_message.data[0] = 0; //start game
-			tx_message.data[1] = 1; //Stop game
-			tx_message.data[2] = score;
-			can_send(&tx_message,0);
-			
-			score = 0;
-			updateScore = false;
-			
-		} else if (updateScore && gameRunning == true)
-		{
-			printf("Current score: %d\n\r",score);
-			CAN_MESSAGE tx_message;
-			
-			tx_message.id = 2;
-			tx_message.data_length = 3;
-			tx_message.data[0] = 0; //start game
-			tx_message.data[1] = 0; //Stop game
-			tx_message.data[2] = score;
-			can_send(&tx_message,0);
-			updateScore = false;
+			printf("start = %d\n\r", game_data.start);
+			printf("stop = %d\n\r", game_data.stop);
 		}
 	}
 
@@ -238,4 +206,30 @@ void pid_handler(uint8_t setpoint){
 	}
 	set_motor_speed(abs(u));
 	
+}
+
+void update_score(uint8_t SCORE_STATE)
+{
+	if(CAN0->CAN_SR & CAN_SR_MB0) //CAN0 MB0 ready to send 
+	{
+		CAN_MESSAGE tx_message;
+		
+		CAN0->CAN_IDR = CAN_IER_MB0; //Disable interrupt
+		tx_message.id = 2;
+		tx_message.data_length = 3;
+		tx_message.data[0] = 0; //Start game
+		tx_message.data[2] = score;
+		
+		switch (SCORE_STATE) {
+		case CURRENT_SCORE:
+			tx_message.data[1] = 0; //Stop game
+			break;
+		case FINAL_SCORE:
+			tx_message.data[1] = 1; //Stop game
+			gameRunning = false;
+			score = 0;
+			break;
+		}
+		can_send(&tx_message,0);
+	}
 }
