@@ -10,7 +10,7 @@ OLED, fonts, images and a menu library.
 API Reference
 **************
 
-.. doxygengroup:: menu
+.. doxygengroup:: oled_menu
 
 .. doxygengroup:: oled
 
