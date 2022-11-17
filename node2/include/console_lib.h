@@ -38,7 +38,7 @@ typedef struct console_data_t
 typedef struct game_data_t
 {
 	uint8_t start;
-	uint8_t stop;
+	volatile uint8_t stop;
 	uint8_t score;
 	
 } GAME_DATA;
