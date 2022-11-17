@@ -11,3 +11,7 @@ API Reference
 **************
 
 .. doxygengroup:: sram
+
+.. raw:: latex
+
+    \clearpage

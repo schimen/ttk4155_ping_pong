@@ -10,3 +10,7 @@ API Reference
 **************
 
 .. doxygengroup:: pid
+
+.. raw:: latex
+
+    \clearpage

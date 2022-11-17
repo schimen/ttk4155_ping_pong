@@ -21,3 +21,7 @@ Modules
    oled.rst
    js_slider.rst
    sram.rst
+
+.. raw:: latex
+
+    \clearpage

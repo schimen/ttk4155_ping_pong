@@ -11,3 +11,7 @@ API Reference
 **************
 
 .. doxygengroup:: console
+
+.. raw:: latex
+
+    \clearpage

@@ -19,3 +19,7 @@ Modules
    pid.rst
    console.rst
    pwm.rst
+
+.. raw:: latex
+
+    \clearpage

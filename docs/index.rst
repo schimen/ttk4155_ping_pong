@@ -15,25 +15,31 @@ Node 2 controls the Ping-Pong board.
 The Ping-Pong board has a servo, a solenoid and a motor that you can play
 ping-pong with.
 
+.. raw:: latex
+
+    \clearpage
 
 .. figure:: ./images/node1.jpg
-   :width: 70%
+   :width: 50%
    :alt: node1
 
    Node 1
 
 .. figure:: ./images/node2.jpg
-   :width: 70%
+   :width: 50%
    :alt: node2
 
    Node 2
 
 .. figure:: ./images/ping_pong_board.jpg
-   :width: 70%
+   :width: 50%
    :alt: ping_pong_board
 
    Ping Pong board
 
+.. raw:: latex
+
+    \clearpage
 
 Nodes
 ********
