@@ -156,6 +156,13 @@ Copyright 2003 Kimberly Otten Software Consulting
 #define MCP_WAKIF		0x40
 #define MCP_MERRF		0x80
 
+/**
+ * @brief MCP2515 API
+ * @defgroup mcp2515
+ * @ingroup mcp2515
+ * @{
+ */
+
 /** Enum used to choose receive buffer in the MCP2515 */
 enum rx_read_mode {
 	RXBUF0_START_ID,
@@ -263,4 +270,6 @@ uint8_t mcp_read_rx_status();
  */
 void mcp_setup_loopback();
 
+
+/** @} */
 #endif

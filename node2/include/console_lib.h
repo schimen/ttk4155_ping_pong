@@ -2,9 +2,9 @@
 #define CONSOLE_LIB_H_
 
 /**
- * @brief
- * @defgroup
- * @ingroup
+ * @brief Drivers for handling IR sensor, solenoid actuation and incoming multifunction USB board data
+ * @defgroup console
+ * @ingroup console
  * @{
  */
 
