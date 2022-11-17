@@ -156,7 +156,7 @@ Copyright 2003 Kimberly Otten Software Consulting
 #define MCP_WAKIF		0x40
 #define MCP_MERRF		0x80
 
-
+/** Enum used to choose receive buffer in the MCP2515 */
 enum rx_read_mode {
 	RXBUF0_START_ID,
 	RXBUF0_START_DATA,
@@ -164,7 +164,7 @@ enum rx_read_mode {
 	RXBUF1_START_DATA
 };
 
-
+/** Enum used to choose transmit buffer in the MCP2515 */
 enum tx_write_mode {
 	TXBUF0_START_ID,
 	TXBUF0_START_DATA,
@@ -174,29 +174,93 @@ enum tx_write_mode {
 	TXBUF2_START_DATA
 };
 
-// PING PONG
 
 #include <avr/io.h>
 #include "spi_lib.h"
 
+
+/**
+ * @brief Read register of MCP2515 with passed address
+ * 
+ * @param address 8-bit memory address
+ * @return Data byte
+ */
 uint8_t mcp_read_byte(uint8_t address);
 
+
+/**
+ * @brief Read the RX buffer of MCP2515
+ * 
+ * @param read_mode Type rx_read_mode. Defines what RX buffer to read from
+ * @param buffer Pointer to receive buffer
+ * @param len Length of data to receive
+ */
 void mcp_read_rxbuffer(uint8_t read_mode, uint8_t * buffer, uint8_t len);
 
+
+/**
+ * @brief Write one byte of data to the MCP2515
+ * 
+ * @param address Memory address to write to
+ * @param data Byte to be written
+ */
 void mcp_write_byte(uint8_t address, uint8_t data);
 
+
+/**
+ * @brief Load transmit buffer of MCP2515
+ * 
+ * @param write_mode Type tx_write_mode. Defines what TX buffer to use
+ * @param data Pointer to local data buffer
+ * @param len Number of bytes to be written
+ */
 void mcp_load_txbuffer(uint8_t write_mode, uint8_t * data, uint8_t len);
 
+
+/**
+ * @brief Request transmission of TX buffer 0 on the MCP2515
+ * 
+ */
 void mcp_request_to_send();
 
+
+/**
+ * @brief Set or clear individual bits in the MCP2515 using a mask
+ * 
+ * @param address Address of the register to modify
+ * @param mask Determines what bits are allowed to change
+ * @param data Determines the value of the modified bits
+ */
 void mcp_bit_modify(uint8_t address, uint8_t mask, uint8_t data);
 
+
+/**
+ * @brief Resets the MCP2515. Same as hardware reset.
+ * 
+ */
 void mcp_reset();
 
+
+/**
+ * @brief Read status register of MCP2515
+ * 
+ * @return Status byte
+ */
 uint8_t mcp_read_status();
 
+
+/**
+ * @brief Read status of the reiceve buffers in the MCP2515
+ * 
+ * @return RX buffer status byte
+ */
 uint8_t mcp_read_rx_status();
 
+
+/**
+ * @brief Setup the MCP2515 in loopback mode
+ * 
+ */
 void mcp_setup_loopback();
 
 #endif

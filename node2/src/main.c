@@ -202,19 +202,26 @@ void LED_setup(void)
 		PIOA->PIO_ODSR |= LED1_PIN;
 }
 
+
+/**
+ * @brief Controller update function. Measures position and sets motor speed and direction based on PID output.
+ * 
+ * @param setpoint Desired position in range 0-100. 0 is right wall and 100 is left wall.
+ */
 void pid_handler(uint8_t setpoint){
-	// Measure motor position
+	// Get motor position
 	uint8_t position = encoder_get_position();
+
+	// Get controller output based on setpoint and current position
 	int16_t u = pid_controller(&pid_data, setpoint, position);
-	if (u > 100) { u = 100;}
-	if (u < -100) { u = -100;}
-	pid_data.u = u;
+
+	// Decide motor direction
 	if (u > 0){
 		set_motor_direction(MOTOR_LEFT);
 	}
 	if (u < 0){
 		set_motor_direction(MOTOR_RIGHT);
 	}
+	// Set motor speed
 	set_motor_speed(abs(u));
-	
 }
