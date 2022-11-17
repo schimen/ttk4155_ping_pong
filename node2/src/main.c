@@ -77,11 +77,12 @@ int main(void)
 				pid_handler(console_data.r_slider);
 				prevMillis = getMillis();
 			}
-			if (gameOver || game_data.start == 0)
+			if (gameOver || game_data.stop == 1)
 			{
 				score =  (getMillis() - startTime) / 10000;
 				printf("Your score: %d \n\r", score);
-				gameRunning = false;
+				gameOver = false;
+				game_data.stop = 0;
 				updateScore = true;
 			}
 		}
@@ -136,7 +137,7 @@ void CAN0_Handler()
 		else if(rx_message.data_length != 0 && rx_message.id == 2)
 		{
 			game_data.start = rx_message.data[0];
-			game_data.stopp = rx_message.data[1];
+			game_data.stop = rx_message.data[1];
 		}
 	}
 	
@@ -145,7 +146,7 @@ void CAN0_Handler()
 		//if(DEBUG_INTERRUPT) printf("CAN0 MB0 ready to send \n\r");
 		//Disable interrupt
 		CAN0->CAN_IDR = CAN_IER_MB0;
-		if (updateScore)
+		if (updateScore && gameRunning == true)
 		{
 			printf("Sending score\n\r");
 			CAN_MESSAGE tx_message;
@@ -157,7 +158,9 @@ void CAN0_Handler()
 			tx_message.data[2] = score;
 			can_send(&tx_message,0);
 			gameOver = false;
+			gameRunning = false;
 			updateScore = false;
+			game_data.start = 0;
 		}
 	}
 
