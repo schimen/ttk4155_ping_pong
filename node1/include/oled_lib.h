@@ -11,37 +11,118 @@
 #include "images.h"
 #include <avr/pgmspace.h>
 
+/**
+ * @brief  OLED API for Node 1
+ * @defgroup oled
+ * @ingroup oled
+ * @{
+ * 
+*/
+
+/**
+ * @brief Set up oled
+ * 
+ */
 void oled_setup(void);
 
+/**
+ * @brief Clear oled screen
+ * 
+ */
 void oled_clear();
 
+/**
+ * @brief Set selected column
+ * 
+ * @param column Column between 0 and 7
+ */
 void oled_set_column(uint8_t column);
 
+/**
+ * @brief Set selected line
+ * 
+ * @param line Line between 0 and 127
+ */
 void oled_set_line(uint8_t line);
 
+/**
+ * @brief Set selected page
+ * 
+ * @param page Page between 0 and 7
+ */
 void oled_set_page(uint8_t page);
 
+/**
+ * @brief Set selected position
+ * 
+ * @param page Page between 0 and 7
+ * @param column Column between 0 and 127
+ */
 void oled_set_pos(uint8_t page, uint8_t column);
 
+/**
+ * @brief Write command to oled
+ * 
+ * @param command Oled command
+ */
 void oled_command_write(uint8_t command);
 
+/**
+ * @brief Write data to oled
+ * 
+ * @param data Oled data
+ */
 void oled_data_write(uint8_t data);
 
+/**
+ * @brief Put character to oled screen
+ * 
+ * @param c Char character to write
+ */
 void oled_putchar(uint8_t c);
 
+/**
+ * @brief Send character (wrapper for putchar)
+ * 
+ * @param data Character to write
+ * @param file C stream
+ * @return int Always returns 0
+ */
 int oled_send_character(char data, FILE *file);
 
-int oled_recv_character(FILE *file);
-
+/**
+ * @brief Print string to oled
+ * 
+ * @param text Array of characters
+ */
 void oled_print(char *text);
 
+/**
+ * @brief Print longer number to oled
+ * 
+ * @param number Number between 0 and 255
+ */
 void oled_print_number(uint8_t number);
 
+/**
+ * @brief Show image of a troll on OLED
+ * 
+ */
 void show_img_troll();
 
+/**
+ * @brief Show image of bird on OLED
+ * 
+ */
 void show_img_bird();
 
+/**
+ * @brief Show image of a skyline on OLED
+ * 
+ */
 void show_img_skyline();
+
+/** @} */
 
 /* OLED command defines */
 #define CMD_SEGMENT_REMAP_0              0xA0 
