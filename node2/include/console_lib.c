@@ -20,7 +20,6 @@ void JS_Handler(uint8_t direction)
 		{
 			currentServoPos--;
 			servo_set_pos(currentServoPos, 6);
-			
 		}
 		break;
 		case LEFT:

@@ -16,17 +16,17 @@
 #include "motor.h"
 
 
-#define MAX_U           25600   // 100% * GAIN_SCALING
-#define MAX_UI          10000    // 
-#define GAIN_SCALING    256
+#define MAX_U           51200   // 100% * GAIN_SCALING
+#define MAX_UI          15000    // 
+#define GAIN_SCALING    512
 
 #define PID_SAMPLING_INTERVAL_MS 1
 
 typedef struct pid_t
 {
-    uint16_t Kp;     // P-gain, Kp = K
-    uint16_t Ki;     // I-gain, Ki = K*(T/Ti)
-    uint16_t Kd;     // D-gain, Kd = K*(Td/T)
+    uint32_t Kp;     // P-gain, Kp = K
+    uint32_t Ki;     // I-gain, Ki = K*(T/Ti)
+    uint32_t Kd;     // D-gain, Kd = K*(Td/T)
     uint16_t Ti;     // Integral term time constant
     uint16_t Td;     // Derivative term time constant
 
@@ -35,8 +35,8 @@ typedef struct pid_t
 	
 	uint32_t u; // Controller output
 	
-    int16_t prev_u_i;
-    int16_t prev_u_d; 
+    int32_t prev_u_i;
+    int32_t prev_u_d; 
 
     int8_t prev_y;  // previous process value
 } PID_DATA;

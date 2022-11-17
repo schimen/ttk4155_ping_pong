@@ -25,7 +25,7 @@
 //#define MJ2_PINS (0x00FF << 1)      // PC1-PC8
 #define MJ2_PINS 0x01FE
 
-#define MOTOR_TRESHOLD 10
+#define MOTOR_TRESHOLD 0
 
 uint16_t encoder_max;
 
