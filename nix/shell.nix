@@ -13,5 +13,11 @@ pkgs.mkShell {
     killall
     openocd
     doxygen
+    (python39.withPackages(ps: with ps; [
+      sphinx
+      breathe
+      matplotlib
+      pyserial
+    ]))
   ];
 }

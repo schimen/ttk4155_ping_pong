@@ -3,5 +3,5 @@
 **/.vs/
 **/.vscode/
 **/__pycache__/
-**/build/
+**/*build/
 node2/sam/
