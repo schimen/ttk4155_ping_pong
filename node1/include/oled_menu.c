@@ -3,31 +3,24 @@
 static int option_selection = 0;
 // Current menu page
 static struct menu_page *current_page;
+// Current high-score
+static uint8_t high_score = 0;
 
 void print_menu()
 {
-    //printf("print menu\n");
     // Clear terminal
     oled_clear();
-    //printf("CLeared menu\n");
     // Set position 0
     oled_set_pos(0, 0);
     // Print title
-    
-    //printf("Print title\n");
-
     oled_putchar('*'); oled_putchar(' ');
     oled_print(current_page->title);
     oled_putchar(' '); oled_putchar('*');
-
-    //oled_printf("** %s **\n", current_page->title);
     // Print all options
     for (uint8_t i = 0; i < MENU_LENGTH; i++) {
-        //printf("print option %d\n", i);
         oled_set_pos(i+1, 0);
         char *name = current_page->options[i].name;
         if (i == option_selection) { // highlight selected option
-            //printf("Option selected\n");
             oled_putchar('>');
             oled_print(name);
         }
@@ -36,6 +29,51 @@ void print_menu()
             oled_print(name);
         }
     }
+}
+
+void game_menu(uint8_t score)
+{
+    // Clear terminal
+    oled_clear();
+    // Set position 0
+    oled_set_pos(0, 0);
+    // Print title
+    oled_print("* Game on *");
+    oled_set_pos(2, 0);
+    // Print high-score
+    oled_print("High score: ");
+    oled_print_number(high_score);
+    // Print current score
+    oled_set_pos(4, 0);
+    oled_print("Your score: ");
+    oled_print_number(score);
+    // Exit menu by pressing right button
+    oled_set_pos(6, 0);
+    oled_print(">Exit");
+}
+
+void game_over(uint8_t score) {
+    // Clear terminal
+    oled_clear();
+    // Set position 0
+    oled_set_pos(0, 0);
+    // Print title
+    oled_print("* Game over *");
+    oled_set_pos(2, 0);
+    // Print high-score
+    oled_print("High score: ");
+    oled_print_number(score);
+    // Print current score
+    oled_set_pos(4, 0);
+    oled_print("Your score: ");
+    oled_print_number(score);
+    // Print message if high-score
+    oled_set_pos(6, 0);
+    if (high_score <= score) {
+        oled_print("New high-score!");
+        high_score = score;
+    }
+    _delay_ms(3000);
 }
 
 void change_menu(void *next_page)

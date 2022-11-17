@@ -9,6 +9,7 @@ Terminal menu:
 
 #include <stdio.h>
 #include <stdlib.h>
+#include "util/delay.h"
 
 #include "oled_lib.h"
 
@@ -57,5 +58,11 @@ void select_up();
 
 // Move the option selection one option down.
 void select_down();
+
+// Show game stats during game
+void game_menu(uint8_t score);
+
+// Show result of game after it is over
+void game_over(uint8_t score);
 
 #endif

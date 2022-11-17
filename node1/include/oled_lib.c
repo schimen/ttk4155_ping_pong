@@ -110,3 +110,13 @@ void oled_print(char *text) {
         oled_putchar(text[i]);
     }
 }
+
+void oled_print_number(uint8_t number) {
+    char result[] = { '0', '0', '0', '\0' };
+    int8_t counter = 2;
+    do {
+        result[counter--] = '0' + (number % 10);
+        number = number / 10;
+    } while (number != 0);
+    oled_print(result);
+}
