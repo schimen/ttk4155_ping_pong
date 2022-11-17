@@ -1,6 +1,6 @@
 #include "sram_lib.h"
 
-void sram_setup(void)
+void sram_setup()
 {
     // Enable external memory
     MCUCR |= (1 << SRE);
@@ -21,7 +21,7 @@ uint8_t sram_read(uint16_t address)
     return ret_val;
 }
 
-void sram_test(void)
+void sram_test()
 {
     volatile char *ext_ram = (char *)EXRAM_START; // Start address for the SRAM
     uint16_t ext_ram_size = 0x800;//0x800;
