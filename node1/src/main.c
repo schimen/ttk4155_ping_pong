@@ -53,6 +53,9 @@ struct menu_page main_page = {
 		{ .name = "Start game", .callback = &start_game },
         { .name = "SRAM test", .callback = &sram_test },
         { .name = "CAN test", .callback = &can_test },
+		{ .name = "Troll", .callback = &show_img_troll },
+		{ .name = "Birb", .callback = &show_img_bird },
+		{ .name = "Skyline", .callback = &show_img_skyline},
     }
 };
 
@@ -60,9 +63,10 @@ void start_game() {
 	game_on = true;
 	struct can_frame msg;
 	msg.id = 2;
-	msg.len = 2;
+	msg.len = 3;
 	msg.data[0] = 1;
 	msg.data[1] = 0;
+	msg.data[2] = 0;
 	can_write(&msg);
 	game_menu(0);
 }
@@ -70,9 +74,10 @@ void start_game() {
 void stop_game() {
 	struct can_frame msg;
 	msg.id = 2;
-	msg.len = 2;
+	msg.len = 3;
 	msg.data[0] = 0;
-	msg.data[1] = 0;
+	msg.data[1] = 1;
+	msg.data[2] = 0;
 	can_write(&msg);
 	game_over(0);
 	game_on = false;
@@ -108,14 +113,14 @@ void menu_service(uint8_t direction, bool run_option_bool){
 void handle_can_msg(struct can_frame *msg) {
 	// Game message
 	if (msg->id == 2) {
-		if (msg->data[0] == 0) {
-			game_over(msg->data[1]);
+		if (msg->data[1]) {
+			game_over(msg->data[2]);
 			game_on = false;
 			change_menu(&main_page);
 		}
 		// Game is on, update score
-		else {
-			game_menu(msg->data[1]);
+		else if (msg->data[0]) {
+			game_menu(msg->data[2]);
 		}
 	}
 }
