@@ -115,11 +115,12 @@ void encoder_calibrate(){
 // 	while (~(current_pos == encoder_get_position())){
 // 		printf("calibrating..\n\r");
 // 		current_pos = encoder_get_position();
-// 		ms_delay(100);
+// 		ms_delay(10);
 // 	}
-	
-	encoder_reset();
+	PIOD->PIO_ODSR &= ~MJ1_EN;
 	set_motor_speed(0);
+	encoder_reset();
+	PIOD->PIO_ODSR |= MJ1_EN;
 	printf("calibration done..%d \n\r", encoder_get_position());
 	set_motor_direction(MOTOR_LEFT);
 	set_motor_speed(60);
