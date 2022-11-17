@@ -30,15 +30,17 @@ int16_t pid_controller(struct pid_t *pid, uint8_t r, uint8_t y){
 
     // Calculate error
     int16_t e = r - y;
-	
-	if(e < 2 && e > -2){ 
+	//printf("e: %d \n\r", e);
+	if(e < 5 && e > -5){ 
 		e = 0; 
 	}
     
+	//printf("e: %d \n\r", e);
+	
     // Calculate controller gains
-    int16_t u_p = pid->Kp * e;
-    int16_t u_i = pid->prev_u_i + pid->Ki * e; // u_i[k] = u_i[k-1] + Ki*e[k]
-    int16_t u_d = pid->beta * pid->prev_u_d - pid->Kd*(1 - pid->beta)*(y - pid->prev_y); // u_d[k] = beta*u_d[k-1] - Kd*(1-beta)*(y[k] - y[k-1])
+    int32_t u_p = pid->Kp * e;
+    int32_t u_i = pid->prev_u_i + pid->Ki * e; // u_i[k] = u_i[k-1] + Ki*e[k]
+    int32_t u_d = pid->beta * pid->prev_u_d - pid->Kd*(1 - pid->beta)*(y - pid->prev_y); // u_d[k] = beta*u_d[k-1] - Kd*(1-beta)*(y[k] - y[k-1])
 
     // limit integral gain, anti-windup
     if(u_i > MAX_UI){
@@ -52,7 +54,8 @@ int16_t pid_controller(struct pid_t *pid, uint8_t r, uint8_t y){
     pid->prev_u_i = u_i;
     pid->prev_u_d = u_d;
     pid->prev_y = y;
-
+	
+	//printf("ui: %d\n\r", u_i);
     int32_t u = u_p + u_i + u_d;
     
     // limit total gain
