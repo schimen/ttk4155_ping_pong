@@ -11,6 +11,7 @@
  * @brief PID controller API for node 2
  * @defgroup pid
  * @ingroup pid
+ * @{
  */
 
 /** PID parameter scaling factor. Used to get higher resolution parameters */
