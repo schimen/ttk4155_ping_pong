@@ -10,20 +10,17 @@ uint8_t mcp_read_byte(uint8_t address) {
 	return rx[0];
 }
 
-
 void mcp_read_rxbuffer(uint8_t read_mode, uint8_t * buffer, uint8_t len) {
 	/* Read MCP RX buffer defined by read_mode */
 	uint8_t tx[] = {MCP_READ_RX0 | (read_mode << 1)};
 	spi_transceive(tx, buffer, 1, len);
 }
 
-
 void mcp_write_byte(uint8_t address, uint8_t data) {
 	/* Transmit write instruction, address and data */
 	uint8_t tx[3] = {MCP_WRITE, address, data};
 	spi_transceive(tx, NULL, 3, 0);
 }
-
 
 void mcp_load_txbuffer(uint8_t write_mode, uint8_t * data, uint8_t len) {
 	/* Make new buffer array with load tx buffer command as first element */
