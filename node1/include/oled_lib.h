@@ -8,6 +8,7 @@
 #include <avr/io.h>
 #include <string.h>
 #include "fonts.h"
+#include "images.h"
 #include <avr/pgmspace.h>
 
 void oled_setup(void);
@@ -35,6 +36,12 @@ int oled_recv_character(FILE *file);
 void oled_print(char *text);
 
 void oled_print_number(uint8_t number);
+
+void show_img_troll();
+
+void show_img_bird();
+
+void show_img_skyline();
 
 /* OLED command defines */
 #define CMD_SEGMENT_REMAP_0              0xA0 

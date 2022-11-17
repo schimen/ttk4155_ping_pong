@@ -53,6 +53,9 @@ struct menu_page main_page = {
 		{ .name = "Start game", .callback = &start_game },
         { .name = "SRAM test", .callback = &sram_test },
         { .name = "CAN test", .callback = &can_test },
+		{ .name = "Troll", .callback = &show_img_troll },
+		{ .name = "Birb", .callback = &show_img_bird },
+		{ .name = "Skyline", .callback = &show_img_skyline},
     }
 };
 
