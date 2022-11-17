@@ -48,7 +48,7 @@ int main(void)
 	pwm_setup();
 	ir_setup();
 	motor_setup();
-	pid_tune(&pid_data, 0.7, 40, 0, 10);
+	pid_tune(&pid_data, 0.7, 1000, 0, 10); // K = 0.7, Ti = 1000, Td = 0
 	solonoid_setup();
 	printf("Node 2 setup done\n\r");
 	prevMillis = getMillis();
@@ -184,19 +184,16 @@ void LED_setup(void)
 void pid_handler(uint8_t setpoint){
 	// Measure motor position
 	uint8_t position = encoder_get_position();
-	//printf("encoder pos: %d \n\r", position);
-	//printf("position: %d \n\r", position);
 	int16_t u = pid_controller(&pid_data, setpoint, position);
 	if (u > 100) { u = 100;}
 	if (u < -100) { u = -100;}
 	pid_data.u = u;
-	
 	if (u > 0){
 		set_motor_direction(MOTOR_LEFT);
 	}
 	if (u < 0){
 		set_motor_direction(MOTOR_RIGHT);
 	}
-	set_motor_speed(u);
+	set_motor_speed(abs(u));
 	
 }
