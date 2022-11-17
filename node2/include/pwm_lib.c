@@ -1,10 +1,3 @@
-/*
- * pwm.c
- *
- * Created: 27.10.2022 15:13:18
- *  Author: joerg
- */ 
-
 #include "pwm_lib.h"
 
 int pwm_setup(){

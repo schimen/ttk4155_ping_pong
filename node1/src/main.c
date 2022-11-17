@@ -119,7 +119,7 @@ void handle_can_msg(struct can_frame *msg) {
 			change_menu(&main_page);
 		}
 		// Game is on, update score
-		else if (msg->data[0]) {
+		else {
 			game_menu(msg->data[2]);
 		}
 	}
