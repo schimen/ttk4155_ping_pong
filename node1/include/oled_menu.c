@@ -72,8 +72,16 @@ void game_over(uint8_t score) {
     if (high_score <= score) {
         oled_print("New high-score!");
         high_score = score;
+        _delay_ms(3000);
+        show_img_bird();
+        _delay_ms(2000);
     }
-    _delay_ms(3000);
+    else {
+        oled_print("No high-score");
+        _delay_ms(3000);
+        show_img_troll();
+        _delay_ms(2000);
+    }
 }
 
 void change_menu(void *next_page)

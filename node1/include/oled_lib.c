@@ -120,3 +120,35 @@ void oled_print_number(uint8_t number) {
     } while (number != 0);
     oled_print(result);
 }
+
+void show_img_troll() {
+    oled_clear();
+    for (uint8_t y = 0; y < 8; y++) {
+        for (uint8_t x = 0; x < 64; x++){
+            oled_set_pos(7-y, x);
+            oled_data_write(pgm_read_word(&trollg[x][y]));
+        }
+    }
+}
+
+void show_img_bird() {
+    oled_clear();
+    oled_set_pos(0, 0);
+    for (uint8_t y = 0; y < 8; y++) {
+        for (uint8_t x = 0; x < 64; x++){
+            oled_set_pos(7-y, x);
+            oled_data_write(pgm_read_word(&parrot[x][y]));
+        }
+    }
+}
+
+void show_img_skyline() {
+    oled_clear();
+    oled_set_pos(0, 0);
+    for (uint8_t y = 0; y < 8; y++) {
+        for (uint8_t x = 0; x < 91; x++){
+            oled_set_pos(7-y, x);
+            oled_data_write(pgm_read_word(&skyline[x][y]));
+        }
+    }
+}
