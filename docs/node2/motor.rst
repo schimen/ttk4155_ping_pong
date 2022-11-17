@@ -12,3 +12,7 @@ API Reference
 **************
 
 .. doxygengroup:: motor
+
+.. raw:: latex
+
+    \clearpage

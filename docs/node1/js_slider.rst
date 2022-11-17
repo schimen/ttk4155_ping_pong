@@ -14,3 +14,7 @@ API Reference
 **************
 
 .. doxygengroup:: js_slider
+
+.. raw:: latex
+
+    \clearpage

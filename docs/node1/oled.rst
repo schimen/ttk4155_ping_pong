@@ -14,6 +14,6 @@ API Reference
 
 .. doxygengroup:: oled
 
-.. doxygengroup:: fonts
+.. raw:: latex
 
-.. doxygengroup:: images
+    \clearpage

@@ -18,3 +18,7 @@ API Reference
 .. doxygengroup:: mcp2515
 
 .. doxygengroup:: spi
+
+.. raw:: latex
+
+    \clearpage

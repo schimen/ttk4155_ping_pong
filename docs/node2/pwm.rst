@@ -10,3 +10,7 @@ API Reference
 **************
 
 .. doxygengroup:: pwm
+
+.. raw:: latex
+
+    \clearpage
