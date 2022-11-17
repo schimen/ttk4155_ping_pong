@@ -1,21 +1,26 @@
-/*
- * js_slider.h
- *
- * Created: 19.09.2022 18:00:41
- *  Author: lineh
- */ 
 #ifndef JS_SLIDER_H_
 #define JS_SLIDER_H_
 
-#define F_CPU 4915200
+/**
+ * @brief Joystick and slider API for node 1
+ * @defgroup js_slider
+ * @ingroup js_slider
+ * @{
+ */
+
 #include <stdio.h>
 #include <avr/io.h>
 #include <stdbool.h>
 #include "util/delay.h"
 #include "interrupt.h"
 
+/** External oscillator frequency */
+#define F_CPU 4915200
+
+/** Joystick direction enum */
 enum JS_position {DEFAULT, RIGHT, LEFT, UP, DOWN};
 
+/** Struct holding current joystick values */
 struct Joystick_t {
 	uint8_t  x_adc; // x-value from ADC
 	uint8_t  y_adc; // y-value from ADC
@@ -26,6 +31,8 @@ struct Joystick_t {
 	uint8_t direction; // Direction of joystick (JS position)
 };
 
+
+/** Struct holding current slider values */
 struct Slider_t {
 	uint8_t  left_adc;	// Left slider from ADC
 	uint8_t  right_adc;	// Right slider from ADC
@@ -33,37 +40,91 @@ struct Slider_t {
 	uint8_t  right_pos;	// Right slider in percent
 };
 
-// Start address for ADC read
+
+/**
+ * @brief Start address for ADC read 
+ * 
+ */
 #define ADC_START_ADR 0x1400
 
-/* Update joystick and slider values from ADC */
+
+/**
+ * @brief Update joystick and slider values from ADC 
+ * 
+ */
 void js_slider_update(void);
 
-/* Averages X amount of adc-measurements to set the default adc-values for the joystick in default position */
+/**
+ * @brief Averages X amount of adc-measurements to set the default adc-values for the joystick in default position
+ * 
+ */
 void calibrate_joystick(void);
 
-/* Return true if there is a new value at left slider */
+/**
+ * @brief Return true if there is a new value at left slider
+ * 
+ * @return True if new value available
+ */
 bool new_slider_left();
 
-/* Return true if there is a new value at right slider */
+/**
+ * @brief Return true if there is a new value at right slider
+ * 
+ * @return True if new value avaible
+ */
 bool new_slider_right();
 
-/* Return true if there is a new direction at joystick */
+/**
+ * @brief  Return true if there is a new direction at joystick
+ * 
+ * @return True if new value available
+ */
 bool new_joystick_direction(void);
 
-/* Return left slider position */
+
+/**
+ * @brief Return left slider position
+ * 
+ * @return uint8_t left slider position
+ */
 uint8_t left_slider_pos();
 
-/* Return right slider position */
+
+/**
+ * @brief Return right slider position
+ * 
+ * @return uint8_t right slider position
+ */
 uint8_t right_slider_pos();
 
-/* Return joystick direction */
+
+/**
+ * @brief Return joystick direction
+ * 
+ * @return uint8_t joystick direction
+ */
 uint8_t joystick_direction();
 
-/* Return true if something has changed from input */
+
+/**
+ * @brief Return true if something has changed from input
+ * 
+ * @param left_btn_pressed Bool representing left touch button
+ * @param right_button_pressed Bool representing right touch button
+ * @return True if there is a change in the data from the multifunction USB board 
+ */
 bool new_event(bool left_btn_pressed, bool right_button_pressed);
 
-/* Write event data to tx buffer, used for sending over CAN */
+
+/**
+ * @brief Write event data to tx buffer, used for sending over CAN
+ * 
+ * @param buffer Data to transmit
+ * @param left_btn_pressed Bool representing left touch button
+ * @param right_btn_pressed Bool representing right touch button
+ */
 void write_event_data(uint8_t *buffer, bool left_btn_pressed, bool right_btn_pressed);
+
+/** @} */
 
 #endif
