@@ -20,7 +20,7 @@
 #define MAX_UI          10000    // 
 #define GAIN_SCALING    128
 
-#define PID_SAMPLING_INTERVAL_MS 10
+#define PID_SAMPLING_INTERVAL_MS 1
 
 typedef struct pid_t
 {

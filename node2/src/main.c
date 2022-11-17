@@ -5,6 +5,7 @@
  * Author : joerg
  */ 
 #include <stdbool.h>
+#include <stdint.h>
 #include "sam.h"
 #include "uart.h"
 #include "string.h"
@@ -23,13 +24,16 @@
 
 
 CONSOLE_DATA console_data;
+GAME_DATA game_data;
 PID_DATA pid_data;
 
 uint32_t prevMillis = 0;
 uint32_t startTime = 0;
+uint16_t score = 0;
 
 volatile bool gameRunning = false;
 volatile bool gameOver = false;
+volatile bool updateScore = false;
 
 void LED_setup(void);
 
@@ -57,10 +61,11 @@ int main(void)
 	
     while (1) 
     {		
-		if (console_data.r_button && gameRunning == false)
+		if (game_data.start == 1 && gameRunning == false)
 		{
 			printf("START GAME\n\r");
 			gameRunning = true;
+			score = 0;
 			startTime = getMillis();
 		}
 		
@@ -69,15 +74,15 @@ int main(void)
 			if (getMillis() >= prevMillis + PID_SAMPLING_INTERVAL_MS)
 			{
 				JS_Handler(console_data.dir_joystick);
-				pid_handler(console_data.l_slider);
+				pid_handler(console_data.r_slider);
 				prevMillis = getMillis();
 			}
-			if (gameOver)
+			if (gameOver || game_data.start == 0)
 			{
-				uint16_t score =  (getMillis() - startTime) / 1000;
+				score =  (getMillis() - startTime) / 10000;
 				printf("Your score: %d \n\r", score);
 				gameRunning = false;
-				gameOver = false;
+				updateScore = true;
 			}
 		}
     } //end while(1)
@@ -96,43 +101,42 @@ void CAN0_Handler()
 	//if(DEBUG_INTERRUPT)printf("CAN0 interrupt\n\r");
 	char can_sr = CAN0->CAN_SR; 
 	
-	CAN_MESSAGE message;
+	CAN_MESSAGE rx_message;
+	
 	//RX interrupt
 	if(can_sr & (CAN_SR_MB1 | CAN_SR_MB2) )//Only mailbox 1 and 2 specified for receiving
 	{
 		if(can_sr & CAN_SR_MB1)  //Mailbox 1 event
 		{
-			can_receive(&message, 1);
+			can_receive(&rx_message, 1);
 		}
 		else if(can_sr & CAN_SR_MB2) //Mailbox 2 event
 		{
-			can_receive(&message, 2);
+			can_receive(&rx_message, 2);
 		}
 		else
 		{
 			printf("CAN0 message arrived in non-used mailbox\n\r");
-			message.data_length = 0;
+			rx_message.data_length = 0;
 		}
 		
 		/* Handle incoming message */
 		
-		if (message.data_length != 0 && message.id == 1)
+		if (rx_message.data_length != 0 && rx_message.id == 1)
 		{
 			//byte 1: bit 0-2 joystick val, bit 3+4 er knapp R+L
 			//byte 2: Left slider
 			//byte 3: Right slider
-			console_data.dir_joystick = message.data[0] & 0x07;
-			console_data.r_button = (message.data[0] >> 3) & 0x01;
-			console_data.l_button = (message.data[0] >> 4) & 0x01;
-			console_data.l_slider = 100-message.data[1];
-			console_data.r_slider = message.data[2];
-		
-			if(DEBUG_INTERRUPT)printf("Console values: \n\r");
-			if(DEBUG_INTERRUPT)printf("dir_joystick: %d \n\r", console_data.dir_joystick);
-			if(DEBUG_INTERRUPT)printf("L_btn: %d \n\r", console_data.l_button);
-			if(DEBUG_INTERRUPT)printf("R_btn: %d \n\r", console_data.r_button);
-			if(DEBUG_INTERRUPT)printf("L_slider: %d \n\r", console_data.l_slider);
-			if(DEBUG_INTERRUPT)printf("R_slider: %d \n\r", console_data.r_slider);
+			console_data.dir_joystick = rx_message.data[0] & 0x07;
+			console_data.r_button = (rx_message.data[0] >> 3) & 0x01;
+			console_data.l_button = (rx_message.data[0] >> 4) & 0x01;
+			console_data.l_slider = 100-rx_message.data[1];
+			console_data.r_slider = 100-rx_message.data[2];
+		}
+		else if(rx_message.data_length != 0 && rx_message.id == 2)
+		{
+			game_data.start = rx_message.data[0];
+			game_data.stopp = rx_message.data[1];
 		}
 	}
 	
@@ -141,6 +145,20 @@ void CAN0_Handler()
 		//if(DEBUG_INTERRUPT) printf("CAN0 MB0 ready to send \n\r");
 		//Disable interrupt
 		CAN0->CAN_IDR = CAN_IER_MB0;
+		if (updateScore)
+		{
+			printf("Sending score\n\r");
+			CAN_MESSAGE tx_message;
+			
+			tx_message.id = 2;
+			tx_message.data_length = 3;
+			tx_message.data[0] = 0; //start game
+			tx_message.data[1] = 1; //Stop game
+			tx_message.data[2] = score;
+			can_send(&tx_message,0);
+			gameOver = false;
+			updateScore = false;
+		}
 	}
 
 	if(can_sr & CAN_SR_ERRP)
@@ -154,10 +172,10 @@ void CAN0_Handler()
 	}
 	
 	NVIC_ClearPendingIRQ(ID_CAN0);
-	//sei();*/
+	
 }
 
-void PIOA_Handler(void)
+void PIOA_Handler(void) // IR-interrupt
 {
 	if (((PIOA->PIO_ISR & IR_PIN) == IR_PIN) && gameRunning == true)
 	{

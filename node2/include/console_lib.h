@@ -28,6 +28,14 @@ typedef struct console_data_t
 	uint8_t r_slider;
 } CONSOLE_DATA;
 
+typedef struct game_data_t
+{
+	uint8_t start;
+	uint8_t stopp;
+	uint8_t score;
+	
+} GAME_DATA;
+
 uint8_t currentServoPos;
 
 void JS_Handler(uint8_t direction);
