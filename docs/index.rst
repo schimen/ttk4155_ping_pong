@@ -15,6 +15,10 @@ Node 2 controls the Ping-Pong board.
 The Ping-Pong board has a servo, a solenoid and a motor that you can play
 ping-pong with.
 
+The source code can be read at GitHub_
+
+.. _GitHub:  https://github.com/schimen/ttk4155_ping_pong
+
 .. raw:: latex
 
     \clearpage
