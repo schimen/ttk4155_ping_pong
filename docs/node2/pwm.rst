@@ -9,4 +9,4 @@ with the servo at the ping-pong board.
 API Reference
 **************
 
-.. doxygengroup:: pw
+.. doxygengroup:: pwm
