@@ -1,9 +1,3 @@
-/*
- * interrupt.h
- *
- * Created: 20.10.2022 11:16:28
- *  Author: lineh
- */ 
 #ifndef INTERRUPT_H_
 #define INTERRUPT_H_
 

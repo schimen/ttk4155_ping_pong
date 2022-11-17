@@ -1,6 +1,13 @@
 #ifndef SPI_LIB_H_
 #define SPI_LIB_H_
 
+/**
+ * @brief SPI library API for node 1 
+ * @defgroup spi
+ * @ingroup spi
+ * @{
+ */
+
 #include <stdio.h>
 #include <avr/io.h>
 
@@ -40,5 +47,7 @@ uint8_t spi_transceiveByte(uint8_t data);
  * @return 0 when transceive operation is done
  */
 int8_t spi_transceive(uint8_t *tx, uint8_t *rx, uint8_t txLen, uint8_t rxLen);
+
+/** @} */
 
 #endif
